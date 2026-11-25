@@ -1,0 +1,41 @@
+# The default dark theme of nomux.
+
+[theme]
+name = "nomux Dark"
+appearance = "dark"
+extends = "base-dark"
+
+[tokens]
+"surface.sunken" = "#111316"
+"surface.base" = "#16181c"
+"surface.button" = "#22262c"
+"surface.raised" = "#1c1f24"
+"surface.floating" = "#24282e"
+
+"text.primary" = "#e6e8eb"
+"text.secondary" = "#c3c8cf"
+"text.muted" = "#9aa1ab"
+"text.on-accent" = "#0e1014"
+
+"fill.hover" = "#e6e8eb0d"
+"fill.selected" = "#e6e8eb14"
+
+"focus.ring" = "#6b8afd"
+"accent" = "#6b8afd"
+
+"state.working" = "#5b9cf5"
+"state.needs-you" = "#e5b445"
+"state.done" = "#4fbf7a"
+"state.error" = "#e5534b"
+"state.idle" = "#8b929c"
+
+"terminal.background" = "#111316"
+"terminal.foreground" = "#d5d9de"
+"terminal.cursor" = "#e6e8eb"
+"terminal.selection" = "#e6e8eb33"
+"terminal.ansi.black" = "#1c1f24"
+"terminal.ansi.white" = "#c3c8cf"
+"terminal.ansi.bright-black" = "#6b727c"
+"terminal.ansi.bright-white" = "#f0f2f4"
+
+"syntax.comment" = "#9aa1ab"

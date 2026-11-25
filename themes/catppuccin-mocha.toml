@@ -1,0 +1,73 @@
+# Catppuccin Mocha. The palette is from https://github.com/catppuccin/catppuccin
+# (MIT License, Copyright (c) 2021 Catppuccin). THIRD_PARTY.md has the notice.
+
+[theme]
+name = "Catppuccin Mocha"
+appearance = "dark"
+extends = "base-dark"
+
+[tokens]
+# crust, mantle, surface0, base, surface0 (the palette has no tone between
+# surface0 and surface1 that keeps the contrast of the red state mark).
+"surface.sunken" = "#11111b"
+"surface.base" = "#181825"
+"surface.button" = "#313244"
+"surface.raised" = "#1e1e2e"
+"surface.floating" = "#313244"
+
+# text, subtext1, subtext0, crust
+"text.primary" = "#cdd6f4"
+"text.secondary" = "#bac2de"
+"text.muted" = "#a6adc8"
+"text.on-accent" = "#11111b"
+
+"fill.hover" = "#cdd6f40d"
+"fill.selected" = "#cdd6f414"
+
+# lavender
+"focus.ring" = "#b4befe"
+"accent" = "#b4befe"
+
+# blue, yellow, green, red, overlay2
+"state.working" = "#89b4fa"
+"state.needs-you" = "#f9e2af"
+"state.done" = "#a6e3a1"
+"state.error" = "#f38ba8"
+"state.idle" = "#9399b2"
+
+# base, text, rosewater, overlay2, and the ANSI colours of the palette
+"terminal.background" = "#1e1e2e"
+"terminal.foreground" = "#cdd6f4"
+"terminal.cursor" = "#f5e0dc"
+"terminal.selection" = "#9399b240"
+"terminal.ansi.black" = "#45475a"
+"terminal.ansi.red" = "#f38ba8"
+"terminal.ansi.green" = "#a6e3a1"
+"terminal.ansi.yellow" = "#f9e2af"
+"terminal.ansi.blue" = "#89b4fa"
+"terminal.ansi.magenta" = "#f5c2e7"
+"terminal.ansi.cyan" = "#94e2d5"
+"terminal.ansi.white" = "#a6adc8"
+"terminal.ansi.bright-black" = "#585b70"
+"terminal.ansi.bright-red" = "#f37799"
+"terminal.ansi.bright-green" = "#89d88b"
+"terminal.ansi.bright-yellow" = "#ebd391"
+"terminal.ansi.bright-blue" = "#74a8fc"
+"terminal.ansi.bright-magenta" = "#f2aede"
+"terminal.ansi.bright-cyan" = "#6bd7ca"
+"terminal.ansi.bright-white" = "#bac2de"
+
+"diff.added.background" = "#a6e3a126"
+"diff.added.gutter" = "#a6e3a1"
+"diff.removed.background" = "#f38ba826"
+"diff.removed.gutter" = "#f38ba8"
+"diff.changed.background" = "#89b4fa26"
+"diff.changed.gutter" = "#89b4fa"
+
+# overlay2, mauve, green, peach, blue, yellow
+"syntax.comment" = "#9399b2"
+"syntax.keyword" = "#cba6f7"
+"syntax.string" = "#a6e3a1"
+"syntax.constant" = "#fab387"
+"syntax.function" = "#89b4fa"
+"syntax.type" = "#f9e2af"

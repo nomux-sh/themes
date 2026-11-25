@@ -1,0 +1,23 @@
+nomux themes
+Copyright The nomux Authors
+
+This product is licensed under the MIT license or the Apache License,
+Version 2.0, at your option.
+
+This product includes colour palettes of these projects. THIRD_PARTY.md has
+the license text of each project.
+
+Catppuccin (https://github.com/catppuccin/catppuccin)
+Copyright (c) 2021 Catppuccin
+MIT License
+Used in themes/catppuccin-mocha.toml
+
+Gruvbox (https://github.com/morhetz/gruvbox)
+Copyright (c) Pavel Pertsev
+MIT/X11 License
+Used in themes/gruvbox-dark.toml
+
+Tokyo Night (https://github.com/tokyo-night/tokyo-night-vscode-theme)
+Copyright (c) 2018-present Enkia
+MIT License
+Used in themes/tokyo-night.toml
