@@ -1,0 +1,22 @@
+[workspace]
+resolver = "3"
+members = ["crates/nomux-theme"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT OR Apache-2.0"
+authors = ["The nomux Authors"]
+repository = "https://github.com/nomux-sh/themes"
+
+[workspace.dependencies]
+# An `.itermcolors` file is an XML property list.
+roxmltree = "0.21.2"
+# `toml::Table` is available only with the `serde` feature.
+toml = { version = "1.2.3", default-features = false, features = ["std", "parse", "serde"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
