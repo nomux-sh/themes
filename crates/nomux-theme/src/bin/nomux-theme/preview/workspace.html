@@ -1,0 +1,52 @@
+<div class="window">
+  <div class="rail">
+    <div class="tile selected">A<span class="mark needs-you"></span></div>
+    <div class="tile">B<span class="mark working"></span></div>
+    <div class="tile">D<span class="mark error"></span></div>
+    <div class="tile">N</div>
+  </div>
+  <div class="sidebar">
+    <div class="title-row"><span>acme-web</span><span class="meta">1 needs you</span></div>
+    <div class="row"><span class="icon">▾</span><span class="name">acme-web</span><span class="meta">· Project</span><span class="mark needs-you"></span></div>
+    <div class="card">
+      <div class="row level-1"><span class="icon">▾</span><span class="name">fix-login</span><span class="meta">· Worktree · 3 changes</span><span class="mark needs-you"></span></div>
+      <div class="row level-2 selected"><span class="icon tool">C</span><span class="name">Claude</span><span class="meta">· wants to run npm test</span><span class="mark needs-you"></span></div>
+      <div class="row level-3 child"><span class="name">Explore</span><span class="meta">· reads session.rs</span><span class="mark working"></span></div>
+      <div class="row level-2"><span class="icon tool">$</span><span class="name">dev</span><span class="meta">· port 3000</span><span class="mark working"></span></div>
+      <p class="meta detail">12 of 40 tests · no output for 2 min</p>
+    </div>
+    <div class="row level-1"><span class="icon">▾</span><span class="name">billing-export</span><span class="meta">· Worktree</span><span class="mark done"></span></div>
+    <div class="row level-2 hover"><span class="icon tool">X</span><span class="name">Codex</span><span class="meta">· wrote 4 files</span><span class="mark done"></span></div>
+    <div class="row level-1"><span class="icon">▾</span><span class="name">upgrade-deps</span><span class="meta">· Worktree</span><span class="mark error"></span></div>
+    <div class="row level-2"><span class="icon tool">Q</span><span class="name">Qwen Code</span><span class="meta">· build failed</span><span class="mark error"></span></div>
+    <div class="row level-1"><span class="icon">▸</span><span class="name">main</span><span class="meta">· Worktree</span><span class="mark idle"></span></div>
+    <div class="row level-2"><span class="icon tool">$</span><span class="name">zsh</span><span class="meta">· idle</span><span class="mark idle"></span></div>
+  </div>
+  <div class="pane">
+    <div class="tabbar">
+      <div class="tab active"><span class="mark needs-you"></span>Team · fix-login</div>
+      <div class="tab"><span class="mark working"></span>Codex</div>
+      <div class="tab hover"><span class="mark done"></span>Qwen Code</div>
+      <span class="spacer"></span>
+      <div class="chip">zsh</div>
+      <div class="chip">dev</div>
+      <div class="chip">logs</div>
+    </div>
+    <div class="roster">
+      <div class="member selected"><span class="icon tool">C</span><span>Claude</span><span class="meta">· leader · asks for approval</span><span class="mark needs-you"></span></div>
+      <div class="member"><span class="icon tool">X</span><span>Codex</span><span class="meta">· writes tests</span><span class="mark working"></span></div>
+      <div class="member"><span class="icon tool">G</span><span>Gemini CLI</span><span class="meta">· review done</span><span class="mark done"></span></div>
+      <div class="member"><span class="icon tool">Q</span><span>Qwen Code ↗</span><span class="meta">· in its own Tab</span><span class="mark idle"></span></div>
+    </div>
+<pre class="terminal"><span class="a2">~/acme-web</span> <span class="a4">fix-login</span> <span class="a8">$</span> npm test
+<span class="a8">running 40 tests</span>
+<span class="a2">ok</span>      session::refresh_keeps_the_token
+<span class="a1">failed</span>  session::expired_token_is_rejected
+<span class="a3">warning</span> <span class="a6">src/auth/session.rs</span>:<span class="a5">42</span> unused variable
+<span class="selection">selected text keeps its colour</span>
+
+<span class="b0">   </span><span class="b1">   </span><span class="b2">   </span><span class="b3">   </span><span class="b4">   </span><span class="b5">   </span><span class="b6">   </span><span class="b7">   </span> <span class="a0">■</span><span class="a1">■</span><span class="a2">■</span><span class="a3">■</span><span class="a4">■</span><span class="a5">■</span><span class="a6">■</span><span class="a7">■</span> 0 to 7
+<span class="b8">   </span><span class="b9">   </span><span class="b10">   </span><span class="b11">   </span><span class="b12">   </span><span class="b13">   </span><span class="b14">   </span><span class="b15">   </span> <span class="a8">■</span><span class="a9">■</span><span class="a10">■</span><span class="a11">■</span><span class="a12">■</span><span class="a13">■</span><span class="a14">■</span><span class="a15">■</span> 8 to 15
+<span class="a2">~/acme-web</span> <span class="a4">fix-login</span> <span class="a8">$</span> <span class="cursor"> </span></pre>
+  </div>
+</div>
