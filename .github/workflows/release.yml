@@ -1,0 +1,113 @@
+name: Release
+
+# A version tag publishes the crate `nomux-theme` to crates.io and makes the
+# GitHub release. The steps for a maintainer are in
+# https://github.com/nomux-sh/.github/blob/main/RELEASING.md
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: read
+
+# A second run for the same tag waits. A release is not cancelled in the
+# middle of a publish.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # The check of the `main` branch reads the history.
+          fetch-depth: 0
+      - name: Install the toolchain from rust-toolchain.toml
+        run: rustup toolchain install
+      - name: Check that the tag is equal to the crate version
+        id: version
+        run: |
+          set -euo pipefail
+          version="$(cargo metadata --no-deps --format-version 1 |
+            jq -r '.packages[] | select(.name == "nomux-theme") | .version')"
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::The tag is $GITHUB_REF_NAME, but the crate version is $version."
+            exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+      - name: Check that the commit is on main
+        run: |
+          set -euo pipefail
+          if ! git merge-base --is-ancestor HEAD origin/main; then
+            echo "::error::The commit of $GITHUB_REF_NAME is not on the main branch."
+            exit 1
+          fi
+      - name: Check that the changelog has the section of the version
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: scripts/release-notes.sh "$VERSION"
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+      - uses: taiki-e/install-action@18101caa61cb89118e2ee749786f33c6d1f8a8cb # v2.90.9
+        with:
+          tool: cargo-nextest@0.9.152
+      - name: cargo nextest
+        run: cargo nextest run --workspace --locked
+      - name: cargo test --doc
+        run: cargo test --workspace --doc --locked
+
+  publish:
+    name: publish to crates.io
+    needs: check
+    # Only a version tag starts this workflow, and the `check` job fails when
+    # the commit is not on `main`. This condition is a second guard.
+    if: github.ref_type == 'tag' && startsWith(github.ref_name, 'v')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install the toolchain from rust-toolchain.toml
+        run: rustup toolchain install
+      - name: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: cargo publish -p nomux-theme --locked
+
+  github-release:
+    name: GitHub release
+    needs: [check, publish]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.check.outputs.version }}
+        run: |
+          set -euo pipefail
+          # A version earlier than 1.0.0 or with a suffix is a pre-release.
+          flags=()
+          case "$VERSION" in
+            0.* | *-*) flags+=(--prerelease) ;;
+          esac
+          scripts/release-notes.sh "$VERSION" > "$RUNNER_TEMP/notes.md"
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" \
+            --notes-file "$RUNNER_TEMP/notes.md" "${flags[@]}"

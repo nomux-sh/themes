@@ -1,0 +1,25 @@
+name: Pull request
+
+# Checks of the pull request title and of the commit messages. They are not in
+# ci.yml because they also run when the title changes (`edited`), and a title
+# change must not start the Rust jobs again.
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pull-request-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  dco:
+    name: dco
+    uses: nomux-sh/.github/.github/workflows/dco.yml@main
+
+  commitlint:
+    name: commitlint
+    uses: nomux-sh/.github/.github/workflows/commitlint.yml@main
