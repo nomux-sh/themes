@@ -1,0 +1,33 @@
+#!/bin/sh
+# Commit message check for nomux repositories.
+# Source: standards/commit-msg in https://github.com/nomux-sh/.github
+# Enable it one time in each clone: git config core.hooksPath .githooks
+set -eu
+
+msg_file=$1
+subject=$(sed -n '1p' "$msg_file")
+
+case "$subject" in
+"Merge "* | "fixup! "* | "squash! "*) exit 0 ;;
+esac
+
+fail() {
+  echo "commit-msg: $1" >&2
+  echo "  subject: $subject" >&2
+  echo "  Format: type: description (no scope, 72 characters at most)." >&2
+  echo "  Types: build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test." >&2
+  exit 1
+}
+
+types='build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test'
+printf '%s\n' "$subject" | grep -Eq "^($types)!?: [^ ].*\$" ||
+  fail "the subject does not have the format 'type: description'."
+
+[ "${#subject}" -le 72 ] || fail "the subject is longer than 72 characters."
+
+if grep -Eiq '^[[:space:]]*(co-authored-by:|generated (with|by) )' "$msg_file"; then
+  fail "the message has a Co-authored-by or a 'generated with' line. Signed-off-by is the only trailer."
+fi
+
+grep -Eq '^Signed-off-by: .+ <[^<>@ ]+@[^<>@ ]+>$' "$msg_file" ||
+  fail "the message has no Signed-off-by trailer. Use: git commit -s"
