@@ -1,0 +1,75 @@
+# Gruvbox Dark. The palette is from https://github.com/morhetz/gruvbox
+# (MIT/X11 License, Pavel Pertsev). THIRD_PARTY.md has the notice.
+
+[theme]
+name = "Gruvbox Dark"
+appearance = "dark"
+extends = "base-dark"
+
+[tokens]
+# The hard contrast variant: dark0_hard is the base, dark0 and dark0_soft are
+# the elevation levels. The palette has no tone below dark0_hard, thus the
+# sunken tone is a darker step of it. dark1 is not an elevation tone here:
+# the red state mark does not keep its contrast on it.
+"surface.sunken" = "#161819"
+"surface.base" = "#1d2021"
+"surface.button" = "#32302f"
+"surface.raised" = "#282828"
+"surface.floating" = "#32302f"
+
+# light1, light2, light3, dark0_hard
+"text.primary" = "#ebdbb2"
+"text.secondary" = "#d5c4a1"
+"text.muted" = "#bdae93"
+"text.on-accent" = "#1d2021"
+
+"fill.hover" = "#ebdbb20d"
+"fill.selected" = "#ebdbb214"
+
+# bright_orange
+"focus.ring" = "#fe8019"
+"accent" = "#fe8019"
+
+# bright_blue, bright_yellow, bright_green, bright_red, light4
+"state.working" = "#83a598"
+"state.needs-you" = "#fabd2f"
+"state.done" = "#b8bb26"
+"state.error" = "#fb4934"
+"state.idle" = "#a89984"
+
+# dark0_hard, light1, and the neutral and bright colours as ANSI 1 to 6 and 9 to 14
+"terminal.background" = "#1d2021"
+"terminal.foreground" = "#ebdbb2"
+"terminal.cursor" = "#ebdbb2"
+"terminal.selection" = "#ebdbb233"
+"terminal.ansi.black" = "#282828"
+"terminal.ansi.red" = "#cc241d"
+"terminal.ansi.green" = "#98971a"
+"terminal.ansi.yellow" = "#d79921"
+"terminal.ansi.blue" = "#458588"
+"terminal.ansi.magenta" = "#b16286"
+"terminal.ansi.cyan" = "#689d6a"
+"terminal.ansi.white" = "#a89984"
+"terminal.ansi.bright-black" = "#928374"
+"terminal.ansi.bright-red" = "#fb4934"
+"terminal.ansi.bright-green" = "#b8bb26"
+"terminal.ansi.bright-yellow" = "#fabd2f"
+"terminal.ansi.bright-blue" = "#83a598"
+"terminal.ansi.bright-magenta" = "#d3869b"
+"terminal.ansi.bright-cyan" = "#8ec07c"
+"terminal.ansi.bright-white" = "#ebdbb2"
+
+"diff.added.background" = "#b8bb2626"
+"diff.added.gutter" = "#b8bb26"
+"diff.removed.background" = "#fb493426"
+"diff.removed.gutter" = "#fb4934"
+"diff.changed.background" = "#83a59826"
+"diff.changed.gutter" = "#83a598"
+
+# light4, bright_orange, bright_green, bright_purple, bright_aqua, bright_yellow
+"syntax.comment" = "#a89984"
+"syntax.keyword" = "#fe8019"
+"syntax.string" = "#b8bb26"
+"syntax.constant" = "#d3869b"
+"syntax.function" = "#8ec07c"
+"syntax.type" = "#fabd2f"

@@ -1,0 +1,69 @@
+# Tokyo Night. The palette is from
+# https://github.com/tokyo-night/tokyo-night-vscode-theme (MIT License,
+# Copyright (c) 2018-present Enkia). THIRD_PARTY.md has the notice.
+
+[theme]
+name = "Tokyo Night"
+appearance = "dark"
+extends = "base-dark"
+
+[tokens]
+# Each value is a colour of the source theme. The surfaces are its side bar,
+# editor, line highlight and selection tones.
+"surface.sunken" = "#16161e"
+"surface.base" = "#1a1b26"
+"surface.button" = "#292e42"
+"surface.raised" = "#1e202e"
+"surface.floating" = "#292e42"
+
+"text.primary" = "#c0caf5"
+"text.secondary" = "#a9b1d6"
+"text.muted" = "#9aa5ce"
+"text.on-accent" = "#16161e"
+
+"fill.hover" = "#c0caf50d"
+"fill.selected" = "#c0caf514"
+
+"focus.ring" = "#7aa2f7"
+"accent" = "#7aa2f7"
+
+"state.working" = "#7aa2f7"
+"state.needs-you" = "#e0af68"
+"state.done" = "#9ece6a"
+"state.error" = "#f7768e"
+"state.idle" = "#9aa5ce"
+
+"terminal.background" = "#16161e"
+"terminal.foreground" = "#a9b1d6"
+"terminal.cursor" = "#c0caf5"
+"terminal.selection" = "#515c7e4d"
+"terminal.ansi.black" = "#363b54"
+"terminal.ansi.red" = "#f7768e"
+"terminal.ansi.green" = "#73daca"
+"terminal.ansi.yellow" = "#e0af68"
+"terminal.ansi.blue" = "#7aa2f7"
+"terminal.ansi.magenta" = "#bb9af7"
+"terminal.ansi.cyan" = "#7dcfff"
+"terminal.ansi.white" = "#787c99"
+"terminal.ansi.bright-black" = "#363b54"
+"terminal.ansi.bright-red" = "#f7768e"
+"terminal.ansi.bright-green" = "#73daca"
+"terminal.ansi.bright-yellow" = "#e0af68"
+"terminal.ansi.bright-blue" = "#7aa2f7"
+"terminal.ansi.bright-magenta" = "#bb9af7"
+"terminal.ansi.bright-cyan" = "#7dcfff"
+"terminal.ansi.bright-white" = "#acb0d0"
+
+"diff.added.background" = "#41a6b526"
+"diff.added.gutter" = "#41a6b5"
+"diff.removed.background" = "#db4b4b26"
+"diff.removed.gutter" = "#db4b4b"
+"diff.changed.background" = "#7aa2f726"
+"diff.changed.gutter" = "#7aa2f7"
+
+"syntax.comment" = "#9aa5ce"
+"syntax.keyword" = "#bb9af7"
+"syntax.string" = "#9ece6a"
+"syntax.constant" = "#ff9e64"
+"syntax.function" = "#7aa2f7"
+"syntax.type" = "#2ac3de"

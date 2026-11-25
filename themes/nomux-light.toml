@@ -1,0 +1,41 @@
+# The default light theme of nomux.
+
+[theme]
+name = "nomux Light"
+appearance = "light"
+extends = "base-light"
+
+[tokens]
+"surface.sunken" = "#e8eaed"
+"surface.base" = "#f3f4f6"
+"surface.button" = "#dcdfe4"
+"surface.raised" = "#fbfcfd"
+"surface.floating" = "#ffffff"
+
+"text.primary" = "#1a1d21"
+"text.secondary" = "#3d434b"
+"text.muted" = "#525861"
+"text.on-accent" = "#ffffff"
+
+"fill.hover" = "#1a1d210d"
+"fill.selected" = "#1a1d2114"
+
+"focus.ring" = "#3d5fe0"
+"accent" = "#3d5fe0"
+
+"state.working" = "#2a66cc"
+"state.needs-you" = "#9a6200"
+"state.done" = "#197a41"
+"state.error" = "#c9322a"
+"state.idle" = "#6b717b"
+
+"terminal.background" = "#fbfcfd"
+"terminal.foreground" = "#1a1d21"
+"terminal.cursor" = "#1a1d21"
+"terminal.selection" = "#1a1d2126"
+"terminal.ansi.black" = "#1a1d21"
+"terminal.ansi.white" = "#c3c8cf"
+"terminal.ansi.bright-black" = "#6b717b"
+"terminal.ansi.bright-white" = "#f3f4f6"
+
+"syntax.comment" = "#525861"

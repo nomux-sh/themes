@@ -1,0 +1,108 @@
+# The base light theme. It sets each token of the token set. A light theme
+# extends it and sets only the tokens that differ.
+
+[theme]
+name = "Base Light"
+appearance = "light"
+
+[tokens]
+"surface.sunken" = "#e9e9e9"
+"surface.base" = "#f4f4f4"
+"surface.button" = "#dedede"
+"surface.raised" = "#fcfcfc"
+"surface.floating" = "#ffffff"
+
+"text.primary" = "#1c1c1c"
+"text.secondary" = "#404040"
+"text.muted" = "#555555"
+"text.on-accent" = "#ffffff"
+
+"fill.hover" = "#1c1c1c0d"
+"fill.selected" = "#1c1c1c14"
+
+"line.hairline" = "#0000001f"
+"line.divider" = "#00000033"
+
+"focus.ring" = "#3d5fe0"
+"accent" = "#3d5fe0"
+"shadow.floating" = "#00000029"
+
+"state.working" = "#2a66cc"
+"state.needs-you" = "#9a6200"
+"state.done" = "#197a41"
+"state.error" = "#c9322a"
+"state.idle" = "#6f6f6f"
+
+"terminal.background" = "#fcfcfc"
+"terminal.foreground" = "#1c1c1c"
+"terminal.cursor" = "#1c1c1c"
+"terminal.selection" = "#1c1c1c26"
+"terminal.ansi.black" = "#1c1c1c"
+"terminal.ansi.red" = "#c9322a"
+"terminal.ansi.green" = "#197a41"
+"terminal.ansi.yellow" = "#9a6200"
+"terminal.ansi.blue" = "#2a66cc"
+"terminal.ansi.magenta" = "#8250df"
+"terminal.ansi.cyan" = "#0f7b8a"
+"terminal.ansi.white" = "#c6c6c6"
+"terminal.ansi.bright-black" = "#6f6f6f"
+"terminal.ansi.bright-red" = "#dd4038"
+"terminal.ansi.bright-green" = "#1f8f4d"
+"terminal.ansi.bright-yellow" = "#b07400"
+"terminal.ansi.bright-blue" = "#3f7ee0"
+"terminal.ansi.bright-magenta" = "#9a6bea"
+"terminal.ansi.bright-cyan" = "#1593a5"
+"terminal.ansi.bright-white" = "#f4f4f4"
+
+"diff.added.background" = "#197a4126"
+"diff.added.gutter" = "#197a41"
+"diff.removed.background" = "#c9322a26"
+"diff.removed.gutter" = "#c9322a"
+"diff.changed.background" = "#2a66cc26"
+"diff.changed.gutter" = "#2a66cc"
+
+"syntax.comment" = "#555555"
+"syntax.keyword" = "#7a3fd0"
+"syntax.string" = "#197a41"
+"syntax.constant" = "#8a5700"
+"syntax.function" = "#2a66cc"
+"syntax.type" = "#0f7180"
+
+# The values below do not change between light and dark.
+
+"font.ui" = ["Inter", "system-ui", "sans-serif"]
+"font.mono" = ["JetBrains Mono", "ui-monospace", "monospace"]
+"font.title.size" = "13px"
+"font.title.weight" = 500
+"font.row.size" = "12px"
+"font.row.weight" = 400
+"font.meta.size" = "11px"
+"font.meta.weight" = 400
+"font.code.size" = "13px"
+"font.code.weight" = 400
+
+"line.width" = "1px"
+"focus.ring-width" = "2px"
+
+"space.1" = "4px"
+"space.2" = "8px"
+"space.3" = "12px"
+"space.4" = "16px"
+
+"density.comfortable.row-height" = "32px"
+"density.comfortable.control-height" = "28px"
+"density.comfortable.padding" = "12px"
+"density.compact.row-height" = "24px"
+"density.compact.control-height" = "24px"
+"density.compact.padding" = "8px"
+
+"size.icon" = "16px"
+"size.mark" = "8px"
+
+"radius.button" = "6px"
+"radius.raised" = "8px"
+"radius.floating" = "12px"
+
+"motion.fast" = "120ms"
+"motion.slow" = "200ms"
+"motion.easing" = "cubic-bezier(0, 0, 0.2, 1)"
