@@ -1,0 +1,406 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/nomux-sh/themes/main/schema/theme.schema.json",
+  "title": "nomux theme",
+  "description": "A nomux theme file: values for the semantic design tokens of the nomux UI.",
+  "type": "object",
+  "required": ["theme"],
+  "additionalProperties": false,
+  "properties": {
+    "theme": {
+      "description": "The identity of the theme.",
+      "type": "object",
+      "required": ["name", "appearance"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "description": "The name that the UI shows.",
+          "type": "string",
+          "minLength": 1
+        },
+        "appearance": {
+          "description": "Whether the theme is light or dark. It must be equal to the appearance of the base theme.",
+          "enum": ["light", "dark"]
+        },
+        "extends": {
+          "description": "The identifier of the base theme: its file name without `.toml`. A token that this file does not set comes from the base theme.",
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        }
+      }
+    },
+    "tokens": {
+      "description": "The values of the tokens. Put each token name in quotes.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "surface.sunken": {
+          "description": "The layout tone one step below the base. Use: Project rail and the track of a tab bar.",
+          "$ref": "#/$defs/color"
+        },
+        "surface.base": {
+          "description": "The base tone of the window. Use: Sidebar, Pane content that is not a terminal (diff, file, timeline) and each region that has no other surface.",
+          "$ref": "#/$defs/color"
+        },
+        "surface.button": {
+          "description": "Elevation level 1 (button): the flat fill of a control. Use: Buttons, shell chips of a tab bar, member chips of a team roster and input fields.",
+          "$ref": "#/$defs/color"
+        },
+        "surface.raised": {
+          "description": "Elevation level 2 (raised): the tone of a container that holds controls. Use: The active Tab, the expanded card of the active sidebar row and the approval card.",
+          "$ref": "#/$defs/color"
+        },
+        "surface.floating": {
+          "description": "Elevation level 3 (floating): the tone of a transient element above the layout. Use: Menus, the command palette, tooltips and hover previews. Only this level has a shadow.",
+          "$ref": "#/$defs/color"
+        },
+        "text.primary": {
+          "description": "The text level with the most contrast. Use: Titles, the names of rows, the active Tab and the text of content.",
+          "$ref": "#/$defs/color"
+        },
+        "text.secondary": {
+          "description": "The text level of items that are not active. Use: Tabs that are not active, chips and the letters of icons.",
+          "$ref": "#/$defs/color"
+        },
+        "text.muted": {
+          "description": "The text level with the least contrast. It keeps a contrast of 4.5:1 without opacity. Use: Metadata after ` · `, Child work rows, hints and placeholders.",
+          "$ref": "#/$defs/color"
+        },
+        "text.on-accent": {
+          "description": "The text on a fill of the accent colour. Use: The label of the primary button.",
+          "$ref": "#/$defs/color"
+        },
+        "fill.hover": {
+          "description": "A neutral tint of `text.primary` (4% to 8%) that is painted over a surface. Use: The row, Tab or control below the pointer.",
+          "$ref": "#/$defs/color"
+        },
+        "fill.selected": {
+          "description": "A neutral tint of `text.primary` (4% to 8%) that is painted over a surface. The text colour does not change. Use: The selected row and a pressed control.",
+          "$ref": "#/$defs/color"
+        },
+        "line.hairline": {
+          "description": "A line colour with low alpha. Use: Separators between items in one region, where a tone step is not possible. Do not use it to put a box around a region.",
+          "$ref": "#/$defs/color"
+        },
+        "line.divider": {
+          "description": "The line between two Panes. Use: Pane dividers. The divider gets the accent colour when the pointer is on it.",
+          "$ref": "#/$defs/color"
+        },
+        "focus.ring": {
+          "description": "The colour of the keyboard focus indicator. Use: The ring around the control or the row that has the keyboard focus.",
+          "$ref": "#/$defs/color"
+        },
+        "accent": {
+          "description": "The one accent colour of the theme. Use: The fill of the primary button, the indicator of the active Tab, the Pane divider below the pointer and the text cursor of an input field.",
+          "$ref": "#/$defs/color"
+        },
+        "shadow.floating": {
+          "description": "The shadow colour of elevation level 3. Use: The shadow of menus, the command palette, tooltips and hover previews. The client sets the offset and the blur.",
+          "$ref": "#/$defs/color"
+        },
+        "state.working": {
+          "description": "State colour blue: the agent works. Use: Status marks only: the mark of a row, a Tab, a project tile or a team member.",
+          "$ref": "#/$defs/color"
+        },
+        "state.needs-you": {
+          "description": "State colour yellow: the agent waits for the user (permission, question or sign-in). Use: Status marks and the edge of the approval card. It is the only state that can pulse.",
+          "$ref": "#/$defs/color"
+        },
+        "state.done": {
+          "description": "State colour green: the agent is done and the user did not read the result. Use: Status marks only.",
+          "$ref": "#/$defs/color"
+        },
+        "state.error": {
+          "description": "State colour red: the agent or the Session stopped with an error. Use: Status marks, and the mark of a field that has an input error.",
+          "$ref": "#/$defs/color"
+        },
+        "state.idle": {
+          "description": "State colour grey: the Session is idle. Use: Status marks only.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.background": {
+          "description": "The default background of a terminal. Use: The cells of a terminal and the region around them in a terminal Tab.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.foreground": {
+          "description": "The default text colour of a terminal. Use: Terminal text that has no ANSI colour.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.cursor": {
+          "description": "The colour of the terminal cursor. Use: The cursor block, bar or underline of a terminal.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.selection": {
+          "description": "The background of selected terminal text. Use: It is painted over the cell background. The text colour does not change.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.black": {
+          "description": "ANSI colour 0. Use: Terminal cells that set colour 0.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.red": {
+          "description": "ANSI colour 1. Use: Terminal cells that set colour 1.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.green": {
+          "description": "ANSI colour 2. Use: Terminal cells that set colour 2.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.yellow": {
+          "description": "ANSI colour 3. Use: Terminal cells that set colour 3.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.blue": {
+          "description": "ANSI colour 4. Use: Terminal cells that set colour 4.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.magenta": {
+          "description": "ANSI colour 5. Use: Terminal cells that set colour 5.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.cyan": {
+          "description": "ANSI colour 6. Use: Terminal cells that set colour 6.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.white": {
+          "description": "ANSI colour 7. Use: Terminal cells that set colour 7.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-black": {
+          "description": "ANSI colour 8. Use: Terminal cells that set colour 8.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-red": {
+          "description": "ANSI colour 9. Use: Terminal cells that set colour 9.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-green": {
+          "description": "ANSI colour 10. Use: Terminal cells that set colour 10.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-yellow": {
+          "description": "ANSI colour 11. Use: Terminal cells that set colour 11.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-blue": {
+          "description": "ANSI colour 12. Use: Terminal cells that set colour 12.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-magenta": {
+          "description": "ANSI colour 13. Use: Terminal cells that set colour 13.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-cyan": {
+          "description": "ANSI colour 14. Use: Terminal cells that set colour 14.",
+          "$ref": "#/$defs/color"
+        },
+        "terminal.ansi.bright-white": {
+          "description": "ANSI colour 15. Use: Terminal cells that set colour 15.",
+          "$ref": "#/$defs/color"
+        },
+        "diff.added.background": {
+          "description": "The background of an added line. It is painted over `surface.base`. Use: Added lines of a diff.",
+          "$ref": "#/$defs/color"
+        },
+        "diff.added.gutter": {
+          "description": "The mark of an added line. Use: The gutter bar and the `+` sign of an added line.",
+          "$ref": "#/$defs/color"
+        },
+        "diff.removed.background": {
+          "description": "The background of a removed line. It is painted over `surface.base`. Use: Removed lines of a diff.",
+          "$ref": "#/$defs/color"
+        },
+        "diff.removed.gutter": {
+          "description": "The mark of a removed line. Use: The gutter bar and the `-` sign of a removed line.",
+          "$ref": "#/$defs/color"
+        },
+        "diff.changed.background": {
+          "description": "The background of the changed part of a line. It is painted over `surface.base`. Use: The words that changed in a line, and a changed line in a file gutter.",
+          "$ref": "#/$defs/color"
+        },
+        "diff.changed.gutter": {
+          "description": "The mark of a changed line. Use: The gutter bar of a changed line.",
+          "$ref": "#/$defs/color"
+        },
+        "syntax.comment": {
+          "description": "Syntax role: comments. Use: Code in a diff, a file or a timeline.",
+          "$ref": "#/$defs/color"
+        },
+        "syntax.keyword": {
+          "description": "Syntax role: keywords and operators that are words. Use: Code in a diff, a file or a timeline.",
+          "$ref": "#/$defs/color"
+        },
+        "syntax.string": {
+          "description": "Syntax role: strings and characters. Use: Code in a diff, a file or a timeline.",
+          "$ref": "#/$defs/color"
+        },
+        "syntax.constant": {
+          "description": "Syntax role: numbers, booleans and named constants. Use: Code in a diff, a file or a timeline.",
+          "$ref": "#/$defs/color"
+        },
+        "syntax.function": {
+          "description": "Syntax role: names of functions and methods. Use: Code in a diff, a file or a timeline.",
+          "$ref": "#/$defs/color"
+        },
+        "syntax.type": {
+          "description": "Syntax role: names of types. Use: Code in a diff, a file or a timeline.",
+          "$ref": "#/$defs/color"
+        },
+        "font.ui": {
+          "description": "The one font family of the UI. Use: All text that is not code.",
+          "$ref": "#/$defs/fontFamily"
+        },
+        "font.mono": {
+          "description": "The one monospace font family. Use: Terminals, diffs, files and code in a timeline.",
+          "$ref": "#/$defs/fontFamily"
+        },
+        "font.title.size": {
+          "description": "Type scale: the size of a title. Use: The title row of a surface, and the title of a row or a Tab.",
+          "$ref": "#/$defs/length"
+        },
+        "font.row.size": {
+          "description": "Type scale: the size of a row. Use: The second line of a row, body text and the labels of controls.",
+          "$ref": "#/$defs/length"
+        },
+        "font.meta.size": {
+          "description": "Type scale: the size of metadata. Use: Metadata, counters and hints.",
+          "$ref": "#/$defs/length"
+        },
+        "font.code.size": {
+          "description": "Type scale: the size of monospace text. Use: Terminals, diffs, files and code in a timeline.",
+          "$ref": "#/$defs/length"
+        },
+        "line.width": {
+          "description": "The width of a line. Use: Hairlines and Pane dividers.",
+          "$ref": "#/$defs/length"
+        },
+        "focus.ring-width": {
+          "description": "The width of the focus ring. Use: The ring around the control or the row that has the keyboard focus.",
+          "$ref": "#/$defs/length"
+        },
+        "space.1": {
+          "description": "Spacing step 1 of the 4 px grid. Use: The gap between an icon or a mark and its label.",
+          "$ref": "#/$defs/length"
+        },
+        "space.2": {
+          "description": "Spacing step 2 of the 4 px grid. Use: The gap between the items of a row and between controls.",
+          "$ref": "#/$defs/length"
+        },
+        "space.3": {
+          "description": "Spacing step 3 of the 4 px grid. Use: The padding of a card and of a floating element.",
+          "$ref": "#/$defs/length"
+        },
+        "space.4": {
+          "description": "Spacing step 4 of the 4 px grid. Use: The gap between the sections of a region, and the indent of one tree level.",
+          "$ref": "#/$defs/length"
+        },
+        "density.comfortable.row-height": {
+          "description": "Comfortable density: the height of a row. Use: Sidebar rows and menu rows.",
+          "$ref": "#/$defs/length"
+        },
+        "density.comfortable.control-height": {
+          "description": "Comfortable density: the height of a control. Use: Buttons, Tabs, chips and input fields.",
+          "$ref": "#/$defs/length"
+        },
+        "density.comfortable.padding": {
+          "description": "Comfortable density: the horizontal padding. Use: The inner edges of rows, Tabs and controls.",
+          "$ref": "#/$defs/length"
+        },
+        "density.compact.row-height": {
+          "description": "Compact density: the height of a row. Use: Sidebar rows and menu rows.",
+          "$ref": "#/$defs/length"
+        },
+        "density.compact.control-height": {
+          "description": "Compact density: the height of a control. Use: Buttons, Tabs, chips and input fields.",
+          "$ref": "#/$defs/length"
+        },
+        "density.compact.padding": {
+          "description": "Compact density: the horizontal padding. Use: The inner edges of rows, Tabs and controls.",
+          "$ref": "#/$defs/length"
+        },
+        "size.icon": {
+          "description": "The one icon size of a row. Use: Icons in rows, Tabs, chips and buttons.",
+          "$ref": "#/$defs/length"
+        },
+        "size.mark": {
+          "description": "The diameter of a status mark. Use: Status marks. A state does not change the size of the mark.",
+          "$ref": "#/$defs/length"
+        },
+        "radius.button": {
+          "description": "The corner radius of elevation level 1. Use: Buttons, chips, Tabs, rows and input fields.",
+          "$ref": "#/$defs/length"
+        },
+        "radius.raised": {
+          "description": "The corner radius of elevation level 2. Use: Cards.",
+          "$ref": "#/$defs/length"
+        },
+        "radius.floating": {
+          "description": "The corner radius of elevation level 3. Use: Menus, the command palette, tooltips and hover previews.",
+          "$ref": "#/$defs/length"
+        },
+        "font.title.weight": {
+          "description": "Type scale: the weight of a title. Use: The title row of a surface, and the title of a row or a Tab.",
+          "$ref": "#/$defs/fontWeight"
+        },
+        "font.row.weight": {
+          "description": "Type scale: the weight of a row. Use: The second line of a row, body text and the labels of controls.",
+          "$ref": "#/$defs/fontWeight"
+        },
+        "font.meta.weight": {
+          "description": "Type scale: the weight of metadata. Use: Metadata, counters and hints.",
+          "$ref": "#/$defs/fontWeight"
+        },
+        "font.code.weight": {
+          "description": "Type scale: the weight of monospace text. Use: Terminals, diffs, files and code in a timeline.",
+          "$ref": "#/$defs/fontWeight"
+        },
+        "motion.fast": {
+          "description": "The duration of a colour change, from 120 ms to 200 ms. Use: A state change of a mark, a hover fill and a selection fill.",
+          "$ref": "#/$defs/duration"
+        },
+        "motion.slow": {
+          "description": "The duration of a size change, from 120 ms to 200 ms. Use: A row that expands, a panel that opens and a Tab that moves.",
+          "$ref": "#/$defs/duration"
+        },
+        "motion.easing": {
+          "description": "The one easing of the UI: ease-out. Use: Each transition. Motion occurs only on a state change, and the client stops it when the user asks for reduced motion.",
+          "$ref": "#/$defs/easing"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "color": {
+      "description": "A colour: #rgb, #rgba, #rrggbb or #rrggbbaa.",
+      "type": "string",
+      "pattern": "^#([0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
+    },
+    "length": {
+      "description": "A length in logical pixels.",
+      "type": "string",
+      "pattern": "^[0-9]+(\\.[0-9]+)?px$"
+    },
+    "duration": {
+      "description": "A duration in milliseconds.",
+      "type": "string",
+      "pattern": "^[0-9]+ms$"
+    },
+    "fontFamily": {
+      "description": "A list of font family names, the preferred family first.",
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "fontWeight": {
+      "description": "A font weight. 400 is regular, 500 is medium.",
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "easing": {
+      "description": "A cubic Bézier easing, as in CSS.",
+      "type": "string",
+      "pattern": "^cubic-bezier\\( *[0-9.]+ *, *-?[0-9.]+ *, *[0-9.]+ *, *-?[0-9.]+ *\\)$"
+    }
+  }
+}

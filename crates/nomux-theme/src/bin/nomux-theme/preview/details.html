@@ -1,0 +1,59 @@
+<figure>
+  <div class="diff comfortable">
+    <div class="title-row"><span>src/auth/session.rs</span><span class="meta">2 added · 1 removed</span></div>
+    <div class="line"><span class="gutter"></span><span class="sign"> </span><span><span class="c">// A token is valid until its expiry time.</span></span></div>
+    <div class="line"><span class="gutter"></span><span class="sign"> </span><span><span class="k">fn</span> <span class="f">is_valid</span>(token: &amp;<span class="t">Token</span>, now: <span class="t">Instant</span>) -&gt; <span class="t">bool</span> {</span></div>
+    <div class="line removed"><span class="gutter"></span><span class="sign">-</span><span>    token.expiry <span class="word">&gt;=</span> now</span></div>
+    <div class="line added"><span class="gutter"></span><span class="sign">+</span><span>    <span class="k">let</span> leeway = <span class="t">Duration</span>::<span class="f">from_secs</span>(<span class="n">30</span>);</span></div>
+    <div class="line added"><span class="gutter"></span><span class="sign">+</span><span>    token.expiry <span class="word">&gt; now + leeway</span></span></div>
+    <div class="line"><span class="gutter"></span><span class="sign"> </span><span>}</span></div>
+    <div class="line changed"><span class="gutter"></span><span class="sign"> </span><span><span class="k">const</span> <span class="n">REALM</span>: &amp;<span class="t">str</span> = <span class="s">"acme"</span>;</span></div>
+  </div>
+  <figcaption class="caption">Diff hunk: added, removed and changed lines, gutters and the six syntax roles</figcaption>
+</figure>
+<figure>
+  <div class="card approval comfortable">
+    <div class="heading"><span class="mark needs-you"></span>Claude wants to run a command</div>
+    <p class="meta">fix-login · waits for 2 min</p>
+    <p class="mono">npm test -- --watch=false</p>
+    <div class="actions">
+      <span class="button primary">Approve</span>
+      <span class="button">Deny</span>
+      <span class="button">Always allow</span>
+    </div>
+  </div>
+  <figcaption class="caption">Approval card: elevation level 2, the needs-you edge and the one accent</figcaption>
+</figure>
+<figure>
+  <div class="levels comfortable">
+    <div class="actions">
+      <span class="button">Button</span>
+      <span class="button hover">Hover</span>
+      <span class="button selected">Pressed</span>
+      <span class="button focus">Focus</span>
+      <span class="button primary">Primary</span>
+    </div>
+    <div class="card">
+      <span class="title">Raised</span>
+      <span class="meta">A card holds controls. It has no border and no shadow.</span>
+      <div class="actions"><span class="button">Button</span></div>
+    </div>
+    <div class="menu">
+      <div class="row"><span class="name">Open in a new Tab</span><span class="meta shortcut">T</span></div>
+      <div class="row hover"><span class="name">Split to the right</span><span class="meta shortcut">S</span></div>
+      <div class="row selected"><span class="name">Detach from the Team</span><span class="meta shortcut">D</span></div>
+    </div>
+  </div>
+  <figcaption class="caption">Elevation levels: button, raised and floating. Only the floating level has a shadow</figcaption>
+</figure>
+<figure>
+  <div class="type-scale">
+    <span class="title">Title 13 medium: Sessions stay alive on the Host</span>
+    <span>Row 12: the client can disconnect and connect again</span>
+    <span class="meta">Meta 11 · 3 changes · 2 min</span>
+    <span class="mono">Code 13: let leeway = 30;</span>
+    <span style="color: var(--text-secondary)">text.secondary on surface.base</span>
+    <span style="color: var(--text-muted)">text.muted on surface.base</span>
+  </div>
+  <figcaption class="caption">Type scale and text levels</figcaption>
+</figure>
