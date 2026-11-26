@@ -11,11 +11,12 @@ Rules for coding agents and for people who work in this repository. `CLAUDE.md` 
 | `crates/nomux-theme/src/token.rs` | The token set: the one source of the token names, kinds, roles and uses. |
 | `crates/nomux-theme/src/color.rs`, `src/value.rs` | Colour maths (WCAG 2.x) and the value kinds with their syntax. |
 | `crates/nomux-theme/src/parse.rs`, `src/validate.rs`, `src/resolve.rs` | A theme file to its tables, the tokens against the token set, and `extends` to a complete theme. |
+| `crates/nomux-theme/src/shipped.rs` | The embedded theme files. A new theme file needs a line in `FILES`. |
 | `crates/nomux-theme/src/theme.rs`, `src/rules.rs` | Typed access to a resolved theme, and the visual rules that each theme must obey. |
 | `crates/nomux-theme/src/iterm.rs` | Import of an iTerm colour scheme. |
 | `crates/nomux-theme/src/bin/nomux-theme/` | The `nomux-theme` command: `check`, `preview`, `schema`, `reference`, `import-iterm`. |
 | `crates/nomux-theme/tests/` | Tests of the iTerm import and of the shipped themes. |
-| `crates/nomux-theme/themes/` | The theme files. `base-dark.toml` and `base-light.toml` set each token. |
+| `crates/nomux-theme/themes/` | The theme files. The crate embeds them with `src/shipped.rs`. `base-dark.toml` and `base-light.toml` set each token. |
 | `schema/theme.schema.json` | JSON Schema of a theme file. Output of `scripts/generate.sh`. Not edited by hand. |
 | `docs/tokens.md` | The token reference. Output of `scripts/generate.sh`. Not edited by hand. |
 | `docs/sidebar.md` | The specification of the sidebar of the desktop client. The preview page shows it. |

@@ -12,7 +12,7 @@ The repository has these parts now:
 
 - The token set: 83 semantic design tokens for the full nomux UI. [docs/tokens.md](docs/tokens.md) gives each token, its role and where the UI can use it.
 - The theme files in [crates/nomux-theme/themes/](crates/nomux-theme/themes), and the JSON Schema of a theme file in [schema/theme.schema.json](schema/theme.schema.json).
-- The crate [`nomux-theme`](crates/nomux-theme): it loads a theme file, resolves `extends`, validates the tokens, gives typed access to the values and examines the visual rules. It also imports an iTerm colour scheme.
+- The crate [`nomux-theme`](crates/nomux-theme): it embeds the theme files, loads a theme file, resolves `extends`, validates the tokens, gives typed access to the values and examines the visual rules. It also imports an iTerm colour scheme.
 - The preview page: <https://nomux-sh.github.io/themes/>. It shows each theme with mock-ups of the nomux UI, each token and each contrast ratio. Each push to `main` publishes it.
 
 These parts are not in the repository yet:
@@ -136,7 +136,7 @@ The library API is in the [README of the crate](crates/nomux-theme/README.md).
 | Path | Content |
 |---|---|
 | `crates/nomux-theme/` | The crate: the library and the `nomux-theme` command. |
-| `crates/nomux-theme/themes/` | The theme files. |
+| `crates/nomux-theme/themes/` | The theme files. The crate embeds them. |
 | `schema/theme.schema.json` | JSON Schema of a theme file. Generated. |
 | `docs/tokens.md` | The token reference. Generated. |
 | `scripts/` | Scripts for the generated files and for the release notes. |

@@ -11,10 +11,14 @@ documentation = "https://docs.rs/nomux-theme"
 readme = "README.md"
 keywords = ["nomux", "theme", "design-tokens", "color", "contrast"]
 categories = ["config", "gui", "command-line-utilities"]
-# The package has the library and the `nomux-theme` command. The test of the
-# shipped themes reads the `themes/` directory of the repository, thus it is
-# not in the package.
-include = ["src/**/*", "README.md", "LICENSE-APACHE", "LICENSE-MIT"]
+# The package has the library, the `nomux-theme` command, the theme files and
+# the tests. The tests examine the themes of the package.
+include = ["src/**/*", "themes/*.toml", "tests/**/*", "README.md", "LICENSE-APACHE", "LICENSE-MIT"]
+
+[features]
+default = ["shipped"]
+# Embeds the theme files of `themes/` in the library: the module `shipped`.
+shipped = []
 
 [dependencies]
 roxmltree.workspace = true
