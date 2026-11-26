@@ -15,7 +15,7 @@ Rules for coding agents and for people who work in this repository. `CLAUDE.md` 
 | `crates/nomux-theme/src/iterm.rs` | Import of an iTerm colour scheme. |
 | `crates/nomux-theme/src/bin/nomux-theme/` | The `nomux-theme` command: `check`, `preview`, `schema`, `reference`, `import-iterm`. |
 | `crates/nomux-theme/tests/` | Tests of the iTerm import and of the shipped themes. |
-| `themes/` | The theme files. `base-dark.toml` and `base-light.toml` set each token. |
+| `crates/nomux-theme/themes/` | The theme files. `base-dark.toml` and `base-light.toml` set each token. |
 | `schema/theme.schema.json` | JSON Schema of a theme file. Output of `scripts/generate.sh`. Not edited by hand. |
 | `docs/tokens.md` | The token reference. Output of `scripts/generate.sh`. Not edited by hand. |
 | `docs/sidebar.md` | The specification of the sidebar of the desktop client. The preview page shows it. |
@@ -33,7 +33,7 @@ Rules for coding agents and for people who work in this repository. `CLAUDE.md` 
 - When you change `token.rs` or a rule constant in `rules.rs`, run `scripts/generate.sh`. Commit the token set, the schema and the token reference in the same commit.
 - Do not edit `schema/theme.schema.json` or `docs/tokens.md` by hand.
 - `base-dark.toml` and `base-light.toml` set each token. All other themes extend one of them and set only the tokens that differ.
-- Each theme in `themes/` must pass `nomux-theme check`. Do not change a rule in `rules.rs` to make a theme pass. Change the theme.
+- Each theme in `crates/nomux-theme/themes/` must pass `nomux-theme check`. Do not change a rule in `rules.rs` to make a theme pass. Change the theme.
 - Colour carries only state. Do not add a second accent, and do not use a state colour for decoration.
 - Do not commit font files. The theme files name the font families. The repositories of the clients ship the fonts.
 - A palette that is not from nomux needs a license that permits redistribution. Read the license in the source repository, then record the source, the license and the copyright notice in `THIRD_PARTY.md` and `NOTICE`.
@@ -52,7 +52,7 @@ cargo nextest run --workspace
 cargo test --workspace --doc
 cargo deny check
 cargo machete
-cargo run --locked -p nomux-theme -- check themes
+cargo run --locked -p nomux-theme -- check crates/nomux-theme/themes
 scripts/check-generated.sh
 cargo package -p nomux-theme --locked
 actionlint

@@ -48,11 +48,11 @@ jobs:
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - name: Check the themes and the visual rules
-        run: cargo run --locked -p nomux-theme -- check themes
+        run: cargo run --locked -p nomux-theme -- check crates/nomux-theme/themes
       - name: Check the schema and the token reference
         run: scripts/check-generated.sh
       - name: Build the preview page
-        run: cargo run --locked -p nomux-theme -- preview themes "$RUNNER_TEMP/index.html"
+        run: cargo run --locked -p nomux-theme -- preview crates/nomux-theme/themes "$RUNNER_TEMP/index.html"
 
   # Builds the crate from the packaged files only, as crates.io users do.
   package:
