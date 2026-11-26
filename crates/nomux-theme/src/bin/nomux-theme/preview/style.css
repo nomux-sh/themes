@@ -32,11 +32,13 @@ body { margin: 0; background: Canvas; color: CanvasText; color-scheme: light dar
   --row-height: var(--density-comfortable-row-height);
   --control-height: var(--density-comfortable-control-height);
   --padding: var(--density-comfortable-padding);
+  --two-line-row-height: var(--density-comfortable-two-line-row-height);
 }
 .compact {
   --row-height: var(--density-compact-row-height);
   --control-height: var(--density-compact-control-height);
   --padding: var(--density-compact-padding);
+  --two-line-row-height: var(--density-compact-two-line-row-height);
 }
 
 .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr)); gap: calc(var(--space-4) * 1.5); align-items: start; }
@@ -52,7 +54,7 @@ figure { display: flex; flex-direction: column; gap: var(--space-2); min-width: 
 .mark.idle { background: var(--state-idle); }
 .icon { width: var(--size-icon); height: var(--size-icon); flex: none; display: grid; place-items: center; color: var(--text-muted); font-size: var(--font-meta-size); }
 .icon.tool { background: var(--surface-button); border-radius: calc(var(--radius-button) / 2); color: var(--text-secondary); }
-.hover, .row:hover, .tab:hover, .button:hover { background-image: linear-gradient(var(--fill-hover), var(--fill-hover)); }
+.hover, .row:hover, .tree-row:hover, .tab:hover, .button:hover { background-image: linear-gradient(var(--fill-hover), var(--fill-hover)); }
 .selected { background-image: linear-gradient(var(--fill-selected), var(--fill-selected)); }
 .focus { outline: var(--focus-ring-width) solid var(--focus-ring); outline-offset: var(--line-width); }
 .spacer { flex: 1; }
@@ -67,10 +69,6 @@ figure { display: flex; flex-direction: column; gap: var(--space-2); min-width: 
 .row .name { flex: none; }
 .row .meta { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .row .mark, .row .shortcut { margin-left: auto; flex: none; }
-.row.child .name { color: var(--text-muted); }
-.row.level-1 { padding-left: calc(var(--padding) + var(--space-4)); }
-.row.level-2 { padding-left: calc(var(--padding) + var(--space-4) * 2); }
-.row.level-3 { padding-left: calc(var(--padding) + var(--space-4) * 3); }
 
 .button {
   display: inline-flex; align-items: center; gap: var(--space-1);
@@ -84,15 +82,11 @@ figure { display: flex; flex-direction: column; gap: var(--space-2); min-width: 
 .menu { background: var(--surface-floating); border-radius: var(--radius-floating); padding: var(--space-1); box-shadow: 0 var(--space-2) calc(var(--space-4) * 2) var(--shadow-floating); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
-/* Workspace: project rail, sidebar, tab bar, team roster, terminal */
+/* Workspace: project rail, tab bar, team roster, terminal */
 .window { display: grid; grid-template-columns: auto 17rem minmax(0, 1fr); border-radius: var(--radius-floating); overflow: hidden; outline: var(--line-width) solid var(--line-hairline); }
 .rail { background: var(--surface-sunken); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
 .tile { position: relative; width: var(--control-height); height: var(--control-height); border-radius: var(--radius-button); background-color: var(--surface-button); color: var(--text-secondary); display: grid; place-items: center; font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
-.tile .mark { position: absolute; top: calc(var(--space-1) / -2); right: calc(var(--space-1) / -2); outline: var(--focus-ring-width) solid var(--surface-sunken); }
-.sidebar { background: var(--surface-base); padding: var(--space-2); display: flex; flex-direction: column; min-width: 0; }
 .title-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); height: var(--control-height); padding: 0 var(--padding); font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
-.sidebar .card { padding: 0 0 var(--space-2); gap: 0; }
-.sidebar .card .detail { padding: 0 var(--padding) 0 calc(var(--padding) + var(--space-4) * 2); }
 .pane { display: flex; flex-direction: column; min-width: 0; background: var(--terminal-background); border-left: var(--line-width) solid var(--line-divider); }
 .tabbar { display: flex; align-items: center; gap: var(--space-1); background: var(--surface-sunken); padding: var(--space-1) var(--space-2); overflow: hidden; }
 .tab { display: flex; align-items: center; gap: var(--space-2); flex: none; height: var(--control-height); padding: 0 var(--padding); border-radius: var(--radius-button); color: var(--text-secondary); font-size: var(--font-title-size); font-weight: var(--font-title-weight); white-space: nowrap; }

@@ -1,6 +1,8 @@
 //! The `preview` command: one static HTML page that shows each theme. The
 //! page has no script and loads nothing from the network.
 
+mod glyph;
+mod sidebar;
 mod swatches;
 
 use std::fs;
@@ -11,6 +13,7 @@ use nomux_theme::{Density, Theme, Value, rules};
 use crate::check;
 
 const STYLE: &str = include_str!("preview/style.css");
+const SIDEBAR_STYLE: &str = include_str!("preview/sidebar.css");
 const WORKSPACE: &str = include_str!("preview/workspace.html");
 const DETAILS: &str = include_str!("preview/details.html");
 
@@ -26,16 +29,22 @@ fn render(themes: &[Theme]) -> String {
         .iter()
         .map(|theme| format!("<a href=\"#{}\">{}</a>", theme.id(), escape(theme.name())))
         .collect();
+    let directions: String = themes
+        .iter()
+        .filter(|theme| ["nomux-dark", "nomux-light"].contains(&theme.id()))
+        .map(sidebar::section)
+        .collect();
     let sections: String = themes.iter().map(section).collect();
     format!(
         "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n\
          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n\
-         <title>nomux themes</title>\n<style>\n{STYLE}</style>\n</head>\n<body>\n\
+         <title>nomux themes</title>\n<style>\n{STYLE}{SIDEBAR_STYLE}</style>\n</head>\n<body>\n\
          <header class=\"page-header\">\n<h1>nomux themes</h1>\n\
          <p>Each section shows one theme: mock-ups of the nomux UI that use only the tokens of the theme, \
          then each token with its value and its contrast ratio. The command <code>nomux-theme preview</code> \
          writes this page from the theme files. The fonts are the fonts of this system when the font \
-         families of the theme are not installed.</p>\n<nav>{links}</nav>\n</header>\n{sections}</body>\n</html>\n"
+         families of the theme are not installed.</p>\n<nav><a href=\"#sidebar-nomux-dark\">Sidebar directions</a>{links}</nav>\n</header>\n\
+         {directions}{sections}</body>\n</html>\n"
     )
 }
 
@@ -58,12 +67,16 @@ fn section(theme: &Theme) -> String {
             .collect();
         format!("<ul class=\"violations\">{items}</ul>\n")
     };
+    let workspace = glyph::fill_template(&WORKSPACE.replace("{rail}", &sidebar::rail()).replace(
+        "{sidebar}",
+        &sidebar::Direction::OrcaOrder.sidebar(sidebar::Frame::Rest),
+    ));
     let workspaces: String = Density::ALL
         .map(|density| {
             let name = density.as_str();
             format!(
-                "<figure class=\"{name}\">\n{WORKSPACE}<figcaption class=\"caption\">Workspace, {name} density: \
-                 project rail, sidebar with each state, tab bar with agent Tabs and shell chips, team roster, \
+                "<figure class=\"{name}\">\n{workspace}<figcaption class=\"caption\">Workspace, {name} density: \
+                 project rail, sidebar of direction D1, tab bar with agent Tabs and shell chips, team roster, \
                  terminal with the 16 ANSI colours</figcaption>\n</figure>\n"
             )
         })
