@@ -53,6 +53,7 @@ fn a_theme_that_breaks_the_rules_gets_one_violation_for_each_rule() {
             "fill.hover" = "#6b8afd0d"
             "fill.selected" = "#e6e8eb40"
             "space.2" = "6px"
+            "density.compact.two-line-row-height" = "34px"
             "motion.slow" = "400ms"
             "##,
         )
@@ -81,6 +82,13 @@ fn a_theme_that_breaks_the_rules_gets_one_violation_for_each_rule() {
         violation,
         Violation::OffGrid {
             token: LengthToken::Space2,
+            ..
+        }
+    )));
+    assert!(violations.iter().any(|violation| matches!(
+        violation,
+        Violation::OffGrid {
+            token: LengthToken::DensityCompactTwoLineRowHeight,
             ..
         }
     )));

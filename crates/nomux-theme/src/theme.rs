@@ -66,6 +66,8 @@ pub struct DensityMetrics {
     pub control_height: Length,
     /// The horizontal padding of rows, Tabs and controls.
     pub padding: Length,
+    /// The height of a row that has a second line.
+    pub two_line_row_height: Length,
 }
 
 /// One token of a resolved theme.
@@ -215,22 +217,25 @@ impl Theme {
 
     /// The metrics of one density.
     pub fn density(&self, density: Density) -> DensityMetrics {
-        let (row_height, control_height, padding) = match density {
+        let (row_height, control_height, padding, two_line_row_height) = match density {
             Density::Comfortable => (
                 LengthToken::DensityComfortableRowHeight,
                 LengthToken::DensityComfortableControlHeight,
                 LengthToken::DensityComfortablePadding,
+                LengthToken::DensityComfortableTwoLineRowHeight,
             ),
             Density::Compact => (
                 LengthToken::DensityCompactRowHeight,
                 LengthToken::DensityCompactControlHeight,
                 LengthToken::DensityCompactPadding,
+                LengthToken::DensityCompactTwoLineRowHeight,
             ),
         };
         DensityMetrics {
             row_height: self.length(row_height),
             control_height: self.length(control_height),
             padding: self.length(padding),
+            two_line_row_height: self.length(two_line_row_height),
         }
     }
 }

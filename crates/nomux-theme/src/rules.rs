@@ -73,7 +73,7 @@ const DIFF_GUTTERS: [ColorToken; 3] = [
     ColorToken::DiffRemovedGutter,
     ColorToken::DiffChangedGutter,
 ];
-const SPACING: [LengthToken; 10] = [
+const SPACING: [LengthToken; 12] = [
     LengthToken::Space1,
     LengthToken::Space2,
     LengthToken::Space3,
@@ -81,9 +81,11 @@ const SPACING: [LengthToken; 10] = [
     LengthToken::DensityComfortableRowHeight,
     LengthToken::DensityComfortableControlHeight,
     LengthToken::DensityComfortablePadding,
+    LengthToken::DensityComfortableTwoLineRowHeight,
     LengthToken::DensityCompactRowHeight,
     LengthToken::DensityCompactControlHeight,
     LengthToken::DensityCompactPadding,
+    LengthToken::DensityCompactTwoLineRowHeight,
 ];
 
 /// One pair of colours that must have a minimum contrast, with the ratio
