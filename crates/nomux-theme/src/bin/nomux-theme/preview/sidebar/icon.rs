@@ -7,6 +7,8 @@ pub enum Icon {
     Open,
     /// The caret of a row that is closed.
     Closed,
+    /// Back to the parent group.
+    Back,
     /// The branch of a worktree.
     Branch,
     /// Add a worktree or a Session.
@@ -22,6 +24,7 @@ impl Icon {
         match self {
             Self::Open => ("caret", "<path d=\"M3 6l5 5 5-5\"/>"),
             Self::Closed => ("caret", "<path d=\"M6 3l5 5-5 5\"/>"),
+            Self::Back => ("caret", "<path d=\"M10 3l-5 5 5 5\"/>"),
             Self::Branch => (
                 "branch",
                 "<circle cx=\"4.5\" cy=\"3.5\" r=\"1.75\"/><circle cx=\"4.5\" cy=\"12.5\" r=\"1.75\"/>\

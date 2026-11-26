@@ -137,7 +137,16 @@ impl Project {
             .expect("the sample has the session")
     }
 
-    fn close_all_but(&mut self, open: &str) {
+    /// The most urgent state of the Sessions of the project.
+    pub fn worst(&self) -> Option<State> {
+        self.worktrees
+            .iter()
+            .filter_map(Worktree::worst)
+            .map(|session| session.state)
+            .min()
+    }
+
+    pub(super) fn close_all_but(&mut self, open: &str) {
         for worktree in &mut self.worktrees {
             worktree.open = worktree.name == open;
         }

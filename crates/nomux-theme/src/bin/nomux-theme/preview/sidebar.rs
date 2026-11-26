@@ -2,6 +2,8 @@
 //! the sidebar of the workspace mock-up. The specification is
 //! `docs/sidebar.md`.
 
+mod alternative;
+mod group;
 mod icon;
 mod row;
 mod sample;
@@ -9,21 +11,27 @@ mod tree;
 
 use super::escape;
 use super::glyph::{State, glyph};
+pub use alternative::section as groups_section;
 use row::Row;
 pub use sample::Frame;
+use sample::Project;
 
 /// The sidebar in one frame. The density comes from the class of an
 /// ancestor.
 pub fn sidebar(frame: Frame) -> String {
-    let project = frame.project();
+    render(&frame.project())
+}
+
+/// The sidebar of one project.
+fn render(project: &Project) -> String {
     let body = if project.worktrees.is_empty() {
         empty_state()
     } else {
-        tree::rows(&project).iter().map(Row::render).collect()
+        tree::rows(project).iter().map(Row::render).collect()
     };
     format!(
         "<div class=\"sidebar\">\n{header}{body}</div>\n",
-        header = row::header(&project),
+        header = row::header(project),
     )
 }
 

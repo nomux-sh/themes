@@ -20,6 +20,8 @@ From top to bottom the sidebar has:
 
 A row has one job: a worktree row identifies a worktree, a Session row reports one Session, a child row reports one child.
 
+The row of a group of projects is not decided. The preview page shows three alternatives in the section "Groups (alternatives)" of nomux Dark and nomux Light. This document will specify the alternative that is chosen.
+
 ## Geometry
 
 The x positions are measured from the left edge of the sidebar. A level `L` is 0, 1 or 2.
