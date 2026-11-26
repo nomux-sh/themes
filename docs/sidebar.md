@@ -1,130 +1,176 @@
 # Sidebar
 
-This document specifies the sidebar of the nomux workspace. It gives three directions. The owner selects one direction. Then the desktop client implements the selected direction from this document.
+This document specifies the sidebar of the nomux desktop client. An engineer can build the sidebar in a native toolkit from this document alone.
 
-The preview page shows each direction in the section "Sidebar directions", for `nomux-dark` and `nomux-light`, in the two densities and in five states. The command `nomux-theme preview` writes the page. The workspace mock-up of each theme uses D1.
+Each value is a token from [tokens.md](tokens.md). The pixel values are the values of the base themes. A theme can change a token, thus the client reads the token and does not use the pixel value.
 
-All values in this document come from the tokens in [tokens.md](tokens.md). The x positions are measured from the left edge of the sidebar. The sidebar is 272 px wide. The project rail is at the left of the sidebar.
+The preview page shows the sidebar in the section "Sidebar" of each theme, in the two densities and in seven frames. The command `nomux-theme preview` writes the page.
 
-## The problem
+## Structure
 
-The old sidebar had these problems:
+The sidebar shows one project. The project rail at its left selects the project.
 
-- Each row was a chain of words: `fix-login · Worktree · 3 changes`. The type words (`Project`, `Worktree`) repeated what the indent already said.
-- Five kinds of row had six different text edges. A child row started to the left of its parent.
-- Each row had a status mark at the far right edge. An open parent showed the same mark as its child, thus three yellow marks were in one column.
-- A card, a selected row and a hover row gave three tints in ten rows: a box in a box.
-- A line of detail was not a row. It looked like a caption for the whole card.
-- The project name was in the rail, in the title row and in a project row.
+From top to bottom the sidebar has:
 
-## Shared rules
+1. The **header**: the project name. The project name is only in the header. There is no project row.
+2. The **tree**, with three levels:
+   - level 0: a **worktree**,
+   - level 1: a **Session** of the worktree: an agent, a shell or a Team,
+   - level 2: a **child** of a Session: the child work of an agent, or a member of a Team.
 
-These rules apply to all three directions.
-
-1. **No type words.** The shape, the position and one icon give the type of a row. A worktree shows a branch icon on its second line. A shell has a monospace name.
-2. **The project name is only in the header.** There is no project row. The header shows the project name and, if a session needs the user, the needs-you glyph and the count, for example "1 needs you".
-3. **Aggregate state only on a closed parent.** A closed worktree, or a closed session with children, shows the most urgent state of its children. An open parent shows no aggregate. The priority is: needs you, error, working, done and not seen, idle.
-4. **One glyph set.** Each state has its own shape, thus the state does not depend on colour only:
-
-   | State | Shape | Colour token |
-   |---|---|---|
-   | Working | arc of three quarters | `state.working` |
-   | Needs you | filled disc | `state.needs-you` |
-   | Done, not seen | check | `state.done` |
-   | Error | cross | `state.error` |
-   | Idle | hollow ring | `state.idle` |
-
-   The glyph is `size.mark` (8 px) in a slot of `size.icon` (16 px). A state never changes the size of the slot or of the row.
-5. **One container.** The selected row gets `fill.selected`. The row below the pointer gets `fill.hover`, which is a smaller step. There is no card around a group of rows and there are no divider lines.
-6. **Needs you does not change the size.** A session that needs the user shows the disc, its reason in `text.primary` instead of `text.muted`, and the count in the header. It sorts first in its worktree. It does not add a line, a pill or a weight.
-7. **A detail belongs to its row.** A detail such as "12 of 40 tests" is the secondary text of the row that it describes, for example the shell `dev`.
-8. **The secondary text truncates first.** The name truncates only when the secondary text has no space left. The data tail at the right never shrinks.
-9. **Colour only for state.** The glyphs have the state colours. All text and icons are neutral.
+A row has one job: a worktree row identifies a worktree, a Session row reports one Session, a child row reports one child.
 
 ## Geometry
 
-The level of a row is 0 for a worktree, 1 for a session and 2 for a child. One level is `space.4` (16 px).
+The x positions are measured from the left edge of the sidebar. A level `L` is 0, 1 or 2.
 
-| Item | Value |
-|---|---|
-| Row height | `density.*.row-height`: 32 px comfortable, 24 px compact |
-| Two-line row height | `density.*.two-line-row-height`: 44 px comfortable, 36 px compact |
-| Header | the row height, then a gap of `space.2` (8 px) |
-| Header text x | `density.*.padding`: 12 px comfortable, 8 px compact |
-| Slot x | padding + 16 × level |
-| Gap between name and secondary text | `space.2` (8 px) |
-| Gap between the slot and the text (D1, D3) | `space.1` (4 px) |
+| Item | Token | Comfortable | Compact |
+|---|---|---|---|
+| Inner padding of the sidebar, on each side | `space.1` | 4 px | 4 px |
+| Header height | `density.*.row-height` | 32 px | 24 px |
+| Gap below the header | `space.2` | 8 px | 8 px |
+| Header text x | `density.*.padding` | 12 px | 8 px |
+| Row height: Session and child | `density.*.row-height` | 32 px | 24 px |
+| Row height: worktree (two lines) | `density.*.two-line-row-height` | 44 px | 40 px |
+| Indent of one level | `space.4` | 16 px | 16 px |
+| Slot x of level `L` | `density.*.padding` + `space.4` × `L` | 12, 28, 44 px | 8, 24, 40 px |
+| Slot size | `size.icon` | 16 px | 16 px |
+| Glyph size, centred in the slot | `size.mark` | 8 px | 8 px |
+| Gap between the slot and the text | `space.1` | 4 px | 4 px |
+| Text x of level 0, 1, 2 | slot x + `size.icon` + `space.1` | 32, 48, 64 px | 28, 44, 60 px |
+| Gap between the name and the secondary text | `space.2` | 8 px | 8 px |
+| Gap before the tail | `space.2` | 8 px | 8 px |
+| Right edge of the tail and of the header count | `space.1` + `space.1` from the edge | 8 px | 8 px |
+| Corner radius of a row | `radius.button` | | |
+| Icons in the slot and in the tail | `size.icon` | 16 px | 16 px |
+| Branch icon on the second line | `font.meta.size` | 11 px | 11 px |
 
-## D1 Orca Order (recommended)
+The left padding of a row is `density.*.padding` − `space.1` + `space.4` × `L`, because the sidebar padding gives the other `space.1`. The right padding of a row is `space.1`.
 
-The state glyph is on the left of each row. A data tail is on the right. A worktree has two lines. The children of a session close to a count.
+A worktree has two lines in both densities. The first line holds the slot, the name and the tail. The second line holds the branch line below the name. The two lines are centred as one block in the row. At 40 px in compact density, 3.5 px are above the name and below the branch line.
 
-| Row | Height comfortable / compact | Text x comfortable / compact | Left slot | Primary | Secondary | Right | Below the pointer only |
+## Rows
+
+### Element order
+
+Each row has the same order from left to right: slot, name, secondary text, tail. An element that has no content takes no space, but the slot always takes its 16 px.
+
+| Row | Height | Text x | Slot at rest | Name | Secondary text | Tail at rest | Below the pointer |
 |---|---|---|---|---|---|---|---|
-| Header | 32 / 24 | 12 / 8 | none | project name, title size and weight | none | needs-you glyph and count, meta size, `text.secondary` | new worktree, close all |
-| Worktree | 44 (two lines) / 24 (one line) | 32 / 28 | empty when open; aggregate glyph when closed; caret below the pointer | name, title size and weight | branch icon, branch and the count of changes, meta size, muted. In compact density it is a muted tail on the same line | nothing | menu, new session |
-| Agent session | 32 / 24 | 48 / 44 | state glyph | name, row size, title weight | reason, meta size, muted | child count (glyph of the most urgent child and `+N`) when the children are closed, then the age | stop, menu (replace the tail); model, cost and the full reason in a tooltip |
-| Shell session | 32 / 24 | 48 / 44 | state glyph | name, row size, monospace | detail (port, progress), muted | age | stop, menu |
-| Child | 32 / 24 | 64 / 60 | state glyph | name, row size, muted (`text.primary` if it needs the user) | what it does, muted | age | open |
+| Header | `row-height` | `padding` | none | project name: `font.title.size`, `font.title.weight` | none | needs-you glyph and "N needs you": `font.meta.*`, `text.secondary`; only if N > 0 | the count stays; then the actions: new worktree, menu |
+| Worktree | `two-line-row-height` | level 0 | open: empty. Closed: the aggregate glyph | worktree name: `font.title.size`, `font.title.weight`, `text.primary` | line 2: branch icon, branch, " · N changes": `font.meta.*`, `text.muted` | none | slot: the caret (open or closed). Tail: new Session, menu |
+| Agent Session | `row-height` | level 1 | state glyph | agent name: `font.row.size`, `font.title.weight`, `text.primary` | reason: `font.meta.*`, `text.muted` | closed children: the glyph of the most urgent child and "+N". Then the age | stop, menu replace the tail |
+| Shell Session | `row-height` | level 1 | state glyph | shell name: `font.mono`, `font.row.size`, `font.code.weight` | detail, for example "port 3000 · 12 of 40 tests": `font.meta.*`, `text.muted` | age | stop, menu replace the tail |
+| Team | `row-height` | level 1 | closed: state glyph. Open: empty | "Team": like an agent name | "N members" | closed: the glyph of the most urgent member and "+N". Then the age | stop, menu replace the tail |
+| Child | `row-height` | level 2 | state glyph | name: `font.row.size`, `font.row.weight`, `text.muted` | what it does: `font.meta.*`, `text.muted` | age | none |
 
-- The data tail ends `space.1` + `space.1` (8 px) from the right edge of the sidebar. The header count ends at the same edge.
-- A Team is one session row with the name "Team" and the count of members as secondary text. Open, its members are child rows. The lead is first and its secondary text starts with "lead".
+- The tail uses `font.meta.*`, `text.muted` and tabular figures, thus the ages make a column.
+- The actions use `text.secondary`. Between two actions the gap is `space.2`.
+- A member of a Team is a child row. The leader is the first member. Its secondary text starts with "leader · ".
+- A child of an agent is open only when the user opens it. At rest the agent shows the count of its children in the tail.
 
-## D2 Even Rows
+### Below the pointer only
 
-Each row has one line and one height. A caret is in a left gutter. The state glyph is in one slot at the right edge.
+These items show only when the pointer is on the row. The row does not change its height or its text edges.
 
-| Row | Height comfortable / compact | Text x comfortable / compact | Left gutter | Primary | Secondary | Right slot | Below the pointer only |
-|---|---|---|---|---|---|---|---|
-| Header | 32 / 24 | 12 / 8 | none | project name | none | needs-you glyph and count | new worktree, close all |
-| Worktree | 32 / 24 | 28 / 24 | caret, always | name, title size and weight | none (branch and changes in a tooltip) | aggregate glyph, only when closed | menu, new session |
-| Agent session | 32 / 24 | 44 / 40 | caret if it has children; for a Team the lead icon, caret below the pointer | name, row size, title weight | reason, muted | state glyph | age, stop, menu |
-| Shell session | 32 / 24 | 44 / 40 | none | name, monospace | detail, muted | state glyph | age, stop, menu |
-| Child | 32 / 24 | 60 / 56 | none | name, muted | what it does, muted | state glyph | age |
+- Header: new worktree and menu, after the count. The menu holds "close all".
+- Worktree: the caret replaces the aggregate glyph in the slot. New Session and menu appear in the tail.
+- Session: stop and menu replace the tail. The full reason, the model and the cost are in the tooltip.
+- Each row: the tooltip shows the full name and the full secondary text.
 
-- The right slot starts at x = 244 px and ends 12 px from the right edge.
-- A Team is shown as its lead. The other members are child rows of the lead.
+## State glyphs
 
-## D3 Quiet Two-Level
+Each state has its own shape, thus a state does not depend on colour only. The glyph is drawn in a view box of 16 × 16 units at `size.mark` (8 px). The open shapes have a stroke of 3 units (1.5 px) with round caps and joins.
 
-At rest only the worktrees show. Each worktree shows the sentence of its most urgent session. One worktree opens at a time.
+| State | Shape | Path in the 16 × 16 view box | Colour |
+|---|---|---|---|
+| Needs you | filled disc | circle at (8, 8), radius 6.5, filled | `state.needs-you` |
+| Error | cross | `M3.5 3.5l9 9m0-9-9 9` | `state.error` |
+| Working | arc of three quarters, turning | `M8 2a6 6 0 1 1-6 6` | `state.working` |
+| Done, not seen | check | `M2.5 8.5l3.5 3.5 7.5-8` | `state.done` |
+| Idle | hollow ring | circle at (8, 8), radius 5.5 | `state.idle` |
+| No process | horizontal dash | `M3 8h10` | `state.idle` |
 
-| Row | Height comfortable / compact | Text x comfortable / compact | Left slot | Primary | Secondary | Right | Below the pointer only |
-|---|---|---|---|---|---|---|---|
-| Header | 32 / 24 | 12 / 8 | none | project name | none | needs-you glyph and count | new worktree |
-| Worktree | 44 / 36 (two lines in both densities) | 32 / 28 | aggregate glyph when closed; empty when open; caret below the pointer | name, title size and weight | closed: the sentence of the most urgent session, for example "Claude wants to run npm test" (`text.primary` if it needs the user); open: branch icon, branch and the count of changes | none | menu |
-| Agent session | 32 / 24, only when the worktree is open | 48 / 44 | state glyph | name, row size, title weight | reason, muted | none | age, stop, menu |
-| Shell session | 32 / 24, only when open | 48 / 44 | state glyph | name, monospace | detail, muted | none | age, stop, menu |
-| Child | 32 / 24, only when its parent is open | 64 / 60 | state glyph | name, muted | what it does, muted | none | age, open |
+The sequence of the table is the priority: needs you is the most urgent, no process is the least urgent.
 
-- The second line of a worktree always has its space. When the worktree opens, the line changes its content, not its height.
-- A Team in a closed worktree gives the sentence "Team · 4 members · Claude asks for approval". Open, the members are session rows. The lead is first and its secondary text starts with "lead".
+### The working glyph turns
+
+- The working glyph turns clockwise around its centre. One turn takes `motion.indicator` (1000 ms) at a constant speed. It does not use `motion.easing`, because it is not a transition.
+- When the user asks for reduced motion, the glyph does not turn. It shows the static arc: the opening is in the top-left quarter.
+- The turn does not change the size of the glyph or of the slot.
+
+### Rules for the states
+
+- **Needs you.** The row shows the disc, and its reason in `text.primary` instead of `text.muted`. The header shows the count. The row sorts first in its worktree. The row does not get a line, a pill, a badge or a weight.
+- **Done, not seen, and done and seen.** The check means that the agent is done and the user did not see the result. When the user opens the Session, the state becomes idle: the hollow ring. The reason text stays. Thus a green mark always asks for the attention of the user, and colour carries only state.
+- **No process: dormant.** A dormant Session has no process, for example after a restart of the Host. It shows the dash in `state.idle` and the secondary text "dormant · restores on open". The dash makes it different from idle without a new colour.
+- **No process: hibernated.** A hibernated agent has no process until the user opens it. It shows the same dash and the secondary text "hibernated". The secondary text gives the cause. The glyph only says that no process runs.
+- **Selected and needs you.** The row gets `fill.selected` and keeps the disc and the `text.primary` reason. A selection never hides a state.
+- **Error.** The cross, and the reason, for example "build failed", in `text.muted`.
+
+## Aggregate state
+
+- Only a closed parent shows an aggregate state.
+- A closed worktree shows the glyph of the most urgent state of its Sessions in its slot.
+- A closed agent with children, or a closed Team, shows the glyph of its most urgent child and "+N" in its tail. Its own state stays in its slot.
+- An open parent shows no aggregate. An open worktree has an empty slot. An open Team has an empty slot: its members show their states.
+- The project tile in the rail shows the most urgent state of the project.
+
+## Sort
+
+- In a worktree, the Sessions that need the user come first. The other Sessions keep their sequence of creation.
+- The worktrees keep their sequence. A state change does not move a worktree, thus a row does not jump below the pointer.
+- The children keep their sequence. The leader of a Team is first.
+
+## Selection, pointer and keyboard focus
+
+- The selected row gets `fill.selected`. The row below the pointer gets `fill.hover`, a smaller step. Both are tints of `text.primary` painted over `surface.base`. The text colour does not change.
+- A fill changes in `motion.fast` with `motion.easing`.
+- There is no card around a group of rows. Only the selected row and the row below the pointer get a fill.
+- The row that has the keyboard focus gets a ring of `focus.ring-width` (2 px) in `focus.ring`, inside the row and with `radius.button`. The ring is inside the row, thus it does not cover a neighbour. Focus and selection are independent: one row can have the focus while another row is selected.
+
+## Long text
+
+- The secondary text truncates first, with an ellipsis. The name truncates only when no space is left for the secondary text.
+- The tail never shrinks and never truncates.
+- The name and the branch line of a worktree truncate independently.
+- The project name in the header truncates. The count never truncates.
+- The tooltip shows the full text.
+- With the sample data at rest, no text truncates at 272 px in either density.
+
+## Empty project
+
+A project without worktrees shows the header and then:
+
+1. "No worktrees", in `font.row.*` and `text.secondary`.
+2. "A worktree holds the Sessions of one branch.", in `font.meta.*` and `text.muted`.
+3. The button "New worktree": `surface.button`, `density.*.control-height`, `radius.button`.
+
+The text starts at the header text x. The gap between the lines is `space.1`. The button is `space.2` below the text, and the block ends `space.3` above the bottom of the sidebar.
+
+## Do not
+
+- Do not write type words such as "Project", "Worktree" or "Session" in a row. The shape and the position give the type.
+- Do not put a card or a border around a group of rows. Do not use divider lines.
+- Do not show a state mark on an open parent.
+- Do not change the weight, the size or the height of a row for a state.
+- Do not use a state colour for text, for an icon or for decoration. Only the glyphs have state colours.
+- Do not add a second accent.
+- Do not show the project name in a row.
 
 ## Measured values
 
-Measured in Chromium on the preview page, sidebar 272 px, for `nomux-dark` and `nomux-light` (the values are the same in the two themes). The fonts Inter and JetBrains Mono were not installed on the machine of the measurement, thus the text used Noto Sans and Noto Sans Mono. The page shows frames (b) to (e) in comfortable density only. For the compact values, a copy of the page showed these frames in compact density too.
+Measured in Chromium on the preview page, for `nomux-dark` and `nomux-light`, sidebar 272 px. The values are the same in the two themes. The fonts Inter and JetBrains Mono were not installed on the machine of the measurement, thus the text used Noto Sans and Noto Sans Mono.
 
-| | D1 | D2 | D3 |
-|---|---|---|---|
-| Text edges, comfortable | 32, 48, 64 | 28, 44, 60 | 32, 48, 64 |
-| Text edges, compact | 28, 44, 60 | 24, 40, 56 | 28, 44, 60 |
-| Header text x | 12 / 8 | 12 / 8 | 12 / 8 |
-| Row heights, comfortable | worktree 44, session 32, child 32 | 32 for each row | worktree 44, session 32, child 32 |
-| Row heights, compact | 24 for each row | 24 for each row | worktree 36, session 24 |
-| Height change between rest, pointer and needs you | none | none | none |
-| Rows at rest | 8 | 8 | 4 |
-| Height at rest with the header, comfortable | 344 px | 296 px | 216 px |
-| Glyphs at rest, header included | 7 | 6 | 5 |
-| Hues at rest | 5 | 5 | 4 |
-| Reason text truncated at rest, comfortable | none | none | none |
-
-Below the pointer, D2 shows the age and the actions before the right slot. Then the detail of `dev` truncates. The full text is in the tooltip.
-
-## Decisions that differ from the first sketches
-
-- **Text edges 32, 48 and 64 for D1 and D3, not 34, 50 and 66.** The gap between the slot and the text is `space.1` (4 px), the token for the gap between a mark and its label. A gap of 6 px is not on the 4 px grid.
-- **The header uses the title weight (500), not 600.** The type scale has no third weight. The header differs from a worktree by its position.
-- **The header count is a needs-you glyph and `text.secondary` text, not yellow text.** The state colours are for marks. The check examines them at 3:1, not at 4.5:1 for text.
-- **The data tail of D1 and D3 ends 8 px from the right edge, not 12 px.** With 12 px, the reason of the Claude row truncated at comfortable density. The right slot of D2 stays at 244 px.
-- **The working glyph does not turn.** The motion tokens are for a state change from 120 ms to 200 ms. A continuous turn needs a decision on a new duration token.
-- **The rows show no model names.** The sample data has none, and the brief keeps the model out of the default view.
+| | Comfortable | Compact |
+|---|---|---|
+| Header text x | 12 | 8 |
+| Text x of level 0, 1, 2 | 32, 48, 64 | 28, 44, 60 |
+| Header height | 32 | 24 |
+| Worktree height | 44 | 40 |
+| Session, Team and child height | 32 | 24 |
+| Right edge of each tail | 8 from the edge | 8 from the edge |
+| Height change between the frames for one row kind | none | none |
+| Sidebar height at rest (a) and below the pointer (b) | 352 and 352 | 296 and 296 |
+| Text truncated at rest | none | none |
+| Text truncated in each frame | only frame (e), the long text | only frame (e), the long text |
