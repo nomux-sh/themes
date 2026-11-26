@@ -146,7 +146,7 @@ impl Project {
             .min()
     }
 
-    pub(super) fn close_all_but(&mut self, open: &str) {
+    fn close_all_but(&mut self, open: &str) {
         for worktree in &mut self.worktrees {
             worktree.open = worktree.name == open;
         }
