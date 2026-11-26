@@ -29,11 +29,6 @@ fn render(themes: &[Theme]) -> String {
         .iter()
         .map(|theme| format!("<a href=\"#{}\">{}</a>", theme.id(), escape(theme.name())))
         .collect();
-    let directions: String = themes
-        .iter()
-        .filter(|theme| ["nomux-dark", "nomux-light"].contains(&theme.id()))
-        .map(sidebar::section)
-        .collect();
     let sections: String = themes.iter().map(section).collect();
     format!(
         "<!doctype html>\n<html lang=\"en\">\n<head>\n<meta charset=\"utf-8\">\n\
@@ -43,8 +38,8 @@ fn render(themes: &[Theme]) -> String {
          <p>Each section shows one theme: mock-ups of the nomux UI that use only the tokens of the theme, \
          then each token with its value and its contrast ratio. The command <code>nomux-theme preview</code> \
          writes this page from the theme files. The fonts are the fonts of this system when the font \
-         families of the theme are not installed.</p>\n<nav><a href=\"#sidebar-nomux-dark\">Sidebar directions</a>{links}</nav>\n</header>\n\
-         {directions}{sections}</body>\n</html>\n"
+         families of the theme are not installed.</p>\n<nav>{links}</nav>\n</header>\n\
+         {sections}</body>\n</html>\n"
     )
 }
 
@@ -67,16 +62,17 @@ fn section(theme: &Theme) -> String {
             .collect();
         format!("<ul class=\"violations\">{items}</ul>\n")
     };
-    let workspace = glyph::fill_template(&WORKSPACE.replace("{rail}", &sidebar::rail()).replace(
-        "{sidebar}",
-        &sidebar::Direction::OrcaOrder.sidebar(sidebar::Frame::Rest),
-    ));
+    let workspace = glyph::fill_template(
+        &WORKSPACE
+            .replace("{rail}", &sidebar::rail())
+            .replace("{sidebar}", &sidebar::sidebar(sidebar::Frame::Rest)),
+    );
     let workspaces: String = Density::ALL
         .map(|density| {
             let name = density.as_str();
             format!(
                 "<figure class=\"{name}\">\n{workspace}<figcaption class=\"caption\">Workspace, {name} density: \
-                 project rail, sidebar of direction D1, tab bar with agent Tabs and shell chips, team roster, \
+                 project rail, sidebar, tab bar with agent Tabs and shell chips, team roster, \
                  terminal with the 16 ANSI colours</figcaption>\n</figure>\n"
             )
         })
@@ -87,7 +83,7 @@ fn section(theme: &Theme) -> String {
          <header>\n<h2>{name}</h2>\n<p class=\"meta\">{id} · {appearance} · {origins}</p>\n</header>\n\
          <p class=\"summary\"><span class=\"mark {state}\"></span>{passed} of {total} contrast pairs pass · \
          {count} rule violations</p>\n{violation_list}\
-         <div class=\"figures wide\">\n{workspaces}</div>\n<div class=\"figures\">\n{DETAILS}</div>\n{table}</section>\n",
+         <div class=\"figures wide\">\n{workspaces}</div>\n{sidebar}<div class=\"figures\">\n{DETAILS}</div>\n{table}</section>\n",
         id = theme.id(),
         name = escape(theme.name()),
         appearance = theme.appearance(),
@@ -95,6 +91,7 @@ fn section(theme: &Theme) -> String {
         total = checks.len(),
         count = violations.len(),
         table = swatches::table(theme, &checks),
+        sidebar = sidebar::section(theme.name()),
     )
 }
 

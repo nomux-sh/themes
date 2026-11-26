@@ -1,6 +1,6 @@
 //! The state glyphs: one shape for each state of a Session, so that a state
 //! does not depend on colour only. Each glyph is an inline SVG. The size
-//! comes from `size.mark` and the colour from the `state.*` token.
+//! comes from `size.mark` and the colour from a `state.*` token.
 
 /// The state of a Session, in the sequence of the priority: the first state
 /// is the most urgent.
@@ -11,18 +11,23 @@ pub enum State {
     Working,
     Done,
     Idle,
+    /// The Session has no process: it is dormant after a restart, or its
+    /// agent is hibernated. Opening the Session starts the command again.
+    NoProcess,
 }
 
 impl State {
-    pub const ALL: [Self; 5] = [
+    pub const ALL: [Self; 6] = [
         Self::NeedsYou,
         Self::Error,
         Self::Working,
         Self::Done,
         Self::Idle,
+        Self::NoProcess,
     ];
 
-    /// The class of the glyph and the suffix of the `state.*` token.
+    /// The class of the glyph. The colour of `no-process` is `state.idle`;
+    /// each other state has the `state.*` token of its own name.
     pub const fn name(self) -> &'static str {
         match self {
             Self::NeedsYou => "needs-you",
@@ -30,6 +35,7 @@ impl State {
             Self::Working => "working",
             Self::Done => "done",
             Self::Idle => "idle",
+            Self::NoProcess => "no-process",
         }
     }
 
@@ -40,11 +46,12 @@ impl State {
             Self::Working => "working",
             Self::Done => "done, not seen",
             Self::Idle => "idle",
+            Self::NoProcess => "no process",
         }
     }
 
-    /// The shape in a 16 by 16 view box: an arc, a disc, a check, a cross
-    /// and a ring.
+    /// The shape in a 16 by 16 view box: an arc, a disc, a check, a cross,
+    /// a ring and a dash.
     const fn shape(self) -> &'static str {
         match self {
             Self::Working => "<path d=\"M8 2a6 6 0 1 1-6 6\"/>",
@@ -52,6 +59,7 @@ impl State {
             Self::Done => "<path d=\"M2.5 8.5l3.5 3.5 7.5-8\"/>",
             Self::Error => "<path d=\"M3.5 3.5l9 9m0-9-9 9\"/>",
             Self::Idle => "<circle cx=\"8\" cy=\"8\" r=\"5.5\"/>",
+            Self::NoProcess => "<path d=\"M3 8h10\"/>",
         }
     }
 }

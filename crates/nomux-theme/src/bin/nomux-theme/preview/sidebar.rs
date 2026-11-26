@@ -1,80 +1,38 @@
-//! The three directions of the sidebar as static mock-ups: the section
-//! "Sidebar directions" of the preview page, and the sidebar of the
-//! workspace mock-up. The specification is `docs/sidebar.md`.
+//! The sidebar as static mock-ups: the section "Sidebar" of each theme, and
+//! the sidebar of the workspace mock-up. The specification is
+//! `docs/sidebar.md`.
 
-mod even_rows;
 mod icon;
-mod orca_order;
-mod quiet_two_level;
 mod row;
 mod sample;
+mod tree;
 
-use nomux_theme::Theme;
-
+use super::escape;
 use super::glyph::{State, glyph};
-use super::{escape, variables};
 use row::Row;
 pub use sample::Frame;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Direction {
-    OrcaOrder,
-    EvenRows,
-    QuietTwoLevel,
+/// The sidebar in one frame. The density comes from the class of an
+/// ancestor.
+pub fn sidebar(frame: Frame) -> String {
+    let project = frame.project();
+    let body = if project.worktrees.is_empty() {
+        empty_state()
+    } else {
+        tree::rows(&project).iter().map(Row::render).collect()
+    };
+    format!(
+        "<div class=\"sidebar\">\n{header}{body}</div>\n",
+        header = row::header(&project),
+    )
 }
 
-impl Direction {
-    pub const ALL: [Self; 3] = [Self::OrcaOrder, Self::EvenRows, Self::QuietTwoLevel];
-
-    const fn class(self) -> &'static str {
-        match self {
-            Self::OrcaOrder => "orca-order",
-            Self::EvenRows => "even-rows",
-            Self::QuietTwoLevel => "quiet-two-level",
-        }
-    }
-
-    const fn title(self) -> &'static str {
-        match self {
-            Self::OrcaOrder => "D1 Orca Order (recommended)",
-            Self::EvenRows => "D2 Even Rows",
-            Self::QuietTwoLevel => "D3 Quiet Two-Level",
-        }
-    }
-
-    const fn summary(self) -> &'static str {
-        match self {
-            Self::OrcaOrder => {
-                "The state glyph is on the left of each row and the data tail on the right; a worktree has two lines and the children of a session close to a count."
-            }
-            Self::EvenRows => {
-                "Each row has one line and one height; carets are in a left gutter and the state glyph is in one slot at the right edge."
-            }
-            Self::QuietTwoLevel => {
-                "At rest only the worktrees show, each with the sentence of its most urgent session; one worktree opens at a time."
-            }
-        }
-    }
-
-    fn rows(self, frame: Frame) -> Vec<Row> {
-        let project = frame.project();
-        match self {
-            Self::OrcaOrder => orca_order::rows(&project),
-            Self::EvenRows => even_rows::rows(&project),
-            Self::QuietTwoLevel => quiet_two_level::rows(&project, frame),
-        }
-    }
-
-    /// The sidebar of this direction in one frame. The density comes from
-    /// the class of an ancestor.
-    pub fn sidebar(self, frame: Frame) -> String {
-        let rows: String = self.rows(frame).iter().map(Row::render).collect();
-        format!(
-            "<div class=\"sidebar {class}\">\n{header}{rows}</div>\n",
-            class = self.class(),
-            header = row::header(&frame.project()),
-        )
-    }
+/// The text of a project without worktrees, and the action that adds one.
+fn empty_state() -> String {
+    "<div class=\"empty-state\"><span class=\"primary\">No worktrees</span>\
+     <span class=\"secondary\">A worktree holds the Sessions of one branch.</span>\
+     <span class=\"button\">New worktree</span></div>\n"
+        .to_owned()
 }
 
 /// The project rail: one tile for each project, with the glyph of its most
@@ -98,53 +56,35 @@ pub fn rail() -> String {
     format!("<div class=\"rail\">{tiles}</div>\n")
 }
 
-/// The section "Sidebar directions" for one theme: the three directions in
-/// both densities, and one frame for each state that a reviewer needs.
-pub fn section(theme: &Theme) -> String {
-    let directions: String = Direction::ALL
-        .iter()
-        .map(|direction| article(*direction))
-        .collect();
+/// The section "Sidebar" of a theme: each frame in both densities.
+pub fn section(theme_name: &str) -> String {
+    let frames: String = Frame::ALL.iter().map(|frame| figure(*frame)).collect();
     format!(
-        "<section class=\"theme directions\" id=\"sidebar-{id}\" style=\"{variables}\">\n\
-         <header>\n<h2>Sidebar directions · {name}</h2>\n<p class=\"meta\">Three ways to order the sidebar, \
-         with the same sample data and only the tokens of {id}. The workspace mock-ups below use D1. \
-         The specification is docs/sidebar.md.</p>\n</header>\n\
-         <div class=\"direction-grid\">\n{directions}</div>\n</section>\n",
-        id = theme.id(),
-        name = escape(theme.name()),
-        variables = variables(theme),
+        "<div class=\"sidebar-section\">\n<header>\n<h3>Sidebar</h3>\n<p class=\"meta\">The sidebar of {name} \
+         in each state, comfortable density on the left and compact density on the right. \
+         The specification is docs/sidebar.md.</p>\n</header>\n<div class=\"sidebar-frames\">\n{frames}</div>\n</div>\n",
+        name = escape(theme_name),
     )
 }
 
-fn article(direction: Direction) -> String {
-    let rest = direction.sidebar(Frame::Rest);
-    let densities: String = [("comfortable", "Comfortable"), ("compact", "Compact")]
+fn figure(frame: Frame) -> String {
+    let rail = if frame == Frame::Rest {
+        rail()
+    } else {
+        String::new()
+    };
+    let windows: String = ["comfortable", "compact"]
         .iter()
-        .map(|(class, word)| {
+        .map(|density| {
             format!(
-                "<figure class=\"{class}\">\n<div class=\"window sidebar-window\">\n{rail}{rest}</div>\n\
-                 <figcaption class=\"caption\">(a) Rest, {word} density, with the project rail</figcaption>\n</figure>\n",
-                rail = rail(),
-            )
-        })
-        .collect();
-    let frames: String = Frame::ALL[1..]
-        .iter()
-        .map(|frame| {
-            format!(
-                "<figure class=\"comfortable\">\n<div class=\"window sidebar-frame\">\n{}</div>\n\
-                 <figcaption class=\"caption\">{}</figcaption>\n</figure>\n",
-                direction.sidebar(*frame),
-                frame.caption()
+                "<div class=\"window sidebar-window {density}\">\n{rail}{}</div>\n",
+                sidebar(frame)
             )
         })
         .collect();
     format!(
-        "<article class=\"direction\">\n<header>\n<h3>{title}</h3>\n<p class=\"meta\">{summary}</p>\n</header>\n\
-         {densities}{frames}</article>\n",
-        title = direction.title(),
-        summary = direction.summary(),
+        "<figure>\n<div class=\"density-pair\">\n{windows}</div>\n<figcaption class=\"caption\">{}</figcaption>\n</figure>\n",
+        frame.caption()
     )
 }
 
@@ -152,48 +92,52 @@ fn article(direction: Direction) -> String {
 mod tests {
     use super::*;
 
-    fn count(direction: Direction, frame: Frame) -> usize {
-        direction.sidebar(frame).matches("class=\"tree-row").count()
+    fn count(frame: Frame) -> usize {
+        sidebar(frame).matches("class=\"tree-row").count()
     }
 
     #[test]
-    fn each_direction_shows_the_rows_of_its_specification() {
+    fn each_frame_shows_the_rows_of_the_specification() {
         let expected = [
             // Four worktrees; three open with their four sessions; the child closed.
-            (Direction::OrcaOrder, Frame::Rest, 8),
-            (Direction::EvenRows, Frame::Rest, 8),
-            // Only the four worktrees.
-            (Direction::QuietTwoLevel, Frame::Rest, 4),
+            (Frame::Rest, 8),
             // fix-login open with Claude, its child and dev; three worktrees closed.
-            (Direction::OrcaOrder, Frame::OpenAndClosed, 7),
-            (Direction::EvenRows, Frame::OpenAndClosed, 7),
-            (Direction::QuietTwoLevel, Frame::OpenAndClosed, 7),
-            // D1: the Team row and four members. D2: the lead and three members.
-            // D3: four members. Each with dev and three closed worktrees.
-            (Direction::OrcaOrder, Frame::Team, 10),
-            (Direction::EvenRows, Frame::Team, 9),
-            (Direction::QuietTwoLevel, Frame::Team, 9),
+            (Frame::OpenAndClosed, 7),
+            // The Team row, its four members and dev; three worktrees closed.
+            (Frame::Team, 10),
+            // upgrade-deps closed; billing-export with Codex and Gemini CLI.
+            (Frame::WithoutProcess, 8),
+            (Frame::Empty, 0),
         ];
-        for (direction, frame, rows) in expected {
-            assert_eq!(count(direction, frame), rows, "{direction:?} in {frame:?}");
+        for (frame, rows) in expected {
+            assert_eq!(count(frame), rows, "{frame:?}");
         }
     }
 
     #[test]
     fn the_pointer_does_not_add_or_remove_a_row() {
-        for direction in [Direction::OrcaOrder, Direction::EvenRows] {
-            assert_eq!(
-                count(direction, Frame::Hover),
-                count(direction, Frame::Rest)
-            );
-        }
+        assert_eq!(count(Frame::Hover), count(Frame::Rest));
     }
 
     #[test]
     fn an_open_parent_shows_no_aggregate_state() {
-        // At rest in D1 fix-login is open: its slot is empty, the needs-you
-        // glyph is on the Claude row and in the header only.
-        let sidebar = Direction::OrcaOrder.sidebar(Frame::Rest);
+        // At rest fix-login is open: its slot is empty, the needs-you glyph
+        // is on the Claude row and in the header only.
+        let sidebar = sidebar(Frame::Rest);
         assert_eq!(sidebar.matches("glyph needs-you").count(), 2);
+    }
+
+    #[test]
+    fn each_state_has_its_own_shape() {
+        let mut shapes: Vec<String> = State::ALL
+            .iter()
+            .map(|state| {
+                let svg = glyph(*state);
+                svg[svg.find('>').expect("an svg element")..].to_owned()
+            })
+            .collect();
+        shapes.sort();
+        shapes.dedup();
+        assert_eq!(shapes.len(), State::ALL.len());
     }
 }

@@ -1,5 +1,5 @@
 //! The row primitives of the sidebar mock-ups: the header and one tree row.
-//! Each direction composes these; no direction writes row markup itself.
+//! The tree composes these; it writes no row markup itself.
 
 use super::super::escape;
 use super::super::glyph::{State, glyph};
@@ -37,12 +37,12 @@ impl Face {
     }
 }
 
-/// The content of a 16 px slot: one item at rest and, optionally, another
-/// item below the pointer. The slot keeps its size in each state.
-#[derive(Default)]
+/// The 16 px slot at the left of a row: a glyph or nothing at rest and,
+/// optionally, an icon below the pointer. The slot keeps its size in each
+/// state.
 pub struct Slot {
-    pub rest: String,
-    pub hover: String,
+    rest: String,
+    hover: String,
 }
 
 impl Slot {
@@ -53,27 +53,25 @@ impl Slot {
         }
     }
 
-    pub fn icon(rest: Icon) -> Self {
-        Self {
-            rest: icon(rest),
-            hover: String::new(),
-        }
-    }
-
     pub fn with_hover(mut self, hover: Icon) -> Self {
         self.hover = icon(hover);
         self
     }
 
-    fn render(&self, side: &str) -> String {
-        if self.hover.is_empty() {
-            return format!("<span class=\"slot {side}\">{}</span>", self.rest);
-        }
+    fn render(&self) -> String {
         format!(
-            "<span class=\"slot {side}\"><span class=\"at-rest\">{}</span><span class=\"on-hover\">{}</span></span>",
-            self.rest, self.hover
+            "<span class=\"slot\">{}</span>",
+            swap(&self.rest, &self.hover)
         )
     }
+}
+
+/// Content at rest that other content replaces below the pointer.
+fn swap(rest: &str, hover: &str) -> String {
+    if hover.is_empty() {
+        return rest.to_owned();
+    }
+    format!("<span class=\"at-rest\">{rest}</span><span class=\"on-hover\">{hover}</span>")
 }
 
 /// One row of the tree.
@@ -81,7 +79,7 @@ pub struct Row {
     /// 0 for a worktree, 1 for a session, 2 for a child.
     pub level: u8,
     pub two_line: bool,
-    pub left: Option<Slot>,
+    pub slot: Slot,
     pub name: String,
     pub face: Face,
     /// The secondary text, already escaped: it can hold an icon.
@@ -91,38 +89,39 @@ pub struct Row {
     pub attention: bool,
     pub tail: String,
     pub hover_tail: String,
-    pub right: Option<Slot>,
     pub selected: bool,
     pub hover: bool,
+    pub focus: bool,
 }
 
 impl Row {
-    pub fn new(level: u8, face: Face, name: &str) -> Self {
+    pub fn new(level: u8, face: Face, name: &str, slot: Slot) -> Self {
         Self {
             level,
             two_line: false,
-            left: None,
+            slot,
             name: escape(name),
             face,
             secondary: String::new(),
             attention: false,
             tail: String::new(),
             hover_tail: String::new(),
-            right: None,
             selected: false,
             hover: false,
+            focus: false,
         }
     }
 
-    /// A row that shows a session or a child, with its marks of selection
-    /// and pointer.
-    pub fn session(level: u8, face: Face, session: &Session, secondary: &str) -> Self {
+    /// A row that shows a session or a child, with its marks of selection,
+    /// pointer and focus.
+    pub fn session(level: u8, face: Face, session: &Session, secondary: &str, slot: Slot) -> Self {
         Self {
             secondary: escape(secondary),
             attention: session.state == State::NeedsYou && session.kind != Kind::Team,
             selected: session.selected,
             hover: session.hover,
-            ..Self::new(level, face, session.name)
+            focus: session.focus,
+            ..Self::new(level, face, session.name, slot)
         }
     }
 
@@ -132,6 +131,7 @@ impl Row {
             (self.two_line, "two-line"),
             (self.selected, "selected"),
             (self.hover, "hover"),
+            (self.focus, "focus"),
             (self.attention, "attention"),
         ] {
             if on {
@@ -139,31 +139,22 @@ impl Row {
                 classes.push_str(class);
             }
         }
-        let left = self
-            .left
-            .as_ref()
-            .map(|slot| slot.render("left"))
-            .unwrap_or_default();
-        let right = self
-            .right
-            .as_ref()
-            .map(|slot| slot.render("right"))
-            .unwrap_or_default();
         let secondary = if self.secondary.is_empty() {
             String::new()
         } else {
             format!("<span class=\"secondary\">{}</span>", self.secondary)
         };
-        let tail = match (self.tail.is_empty(), self.hover_tail.is_empty()) {
-            (true, true) => String::new(),
-            (false, true) => format!("<span class=\"tail\">{}</span>", self.tail),
-            _ => format!(
-                "<span class=\"tail\"><span class=\"at-rest\">{}</span><span class=\"on-hover\">{}</span></span>",
-                self.tail, self.hover_tail
-            ),
+        let tail = if self.tail.is_empty() && self.hover_tail.is_empty() {
+            String::new()
+        } else {
+            format!(
+                "<span class=\"tail\">{}</span>",
+                swap(&self.tail, &self.hover_tail)
+            )
         };
         format!(
-            "<div class=\"{classes}\">{left}<span class=\"text\"><span class=\"primary\">{name}</span>{secondary}</span>{tail}{right}</div>\n",
+            "<div class=\"{classes}\">{slot}<span class=\"text\"><span class=\"primary\">{name}</span>{secondary}</span>{tail}</div>\n",
+            slot = self.slot.render(),
             name = self.name
         )
     }
@@ -184,13 +175,10 @@ pub fn child_count(session: &Session) -> String {
     )
 }
 
-/// The actions of a session that appear below the pointer.
-pub fn actions() -> String {
-    format!(
-        "<span class=\"actions\">{}{}</span>",
-        icon(Icon::Stop),
-        icon(Icon::Menu)
-    )
+/// The actions of a row that appear below the pointer.
+pub fn actions(icons: &[Icon]) -> String {
+    let icons: String = icons.iter().map(|item| icon(*item)).collect();
+    format!("<span class=\"actions\">{icons}</span>")
 }
 
 /// The branch line of a worktree, with the branch icon.
@@ -198,8 +186,9 @@ pub fn branch(line: &str) -> String {
     format!("{}{}", icon(Icon::Branch), escape(line))
 }
 
-/// The header of the sidebar: the one place of the project name, and the
-/// count of the sessions that need the user.
+/// The header of the sidebar: the one place of the project name, the count
+/// of the sessions that need the user and, below the pointer, the actions
+/// of the project.
 pub fn header(project: &Project) -> String {
     let needs_you = project.needs_you();
     let count = if needs_you == 0 {
@@ -211,7 +200,8 @@ pub fn header(project: &Project) -> String {
         )
     };
     format!(
-        "<div class=\"sidebar-header\"><span class=\"primary\">{}</span>{count}</div>\n",
-        escape(project.name)
+        "<div class=\"sidebar-header\"><span class=\"primary\">{}</span><span class=\"tail\">{count}<span class=\"on-hover\">{}</span></span></div>\n",
+        escape(project.name),
+        actions(&[Icon::New, Icon::Menu])
     )
 }

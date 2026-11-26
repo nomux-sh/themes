@@ -9,8 +9,8 @@ pub enum Icon {
     Closed,
     /// The branch of a worktree.
     Branch,
-    /// The lead of a Team.
-    Lead,
+    /// Add a worktree or a Session.
+    New,
     /// Stop the Session.
     Stop,
     /// The menu of the row.
@@ -27,7 +27,7 @@ impl Icon {
                 "<circle cx=\"4.5\" cy=\"3.5\" r=\"1.75\"/><circle cx=\"4.5\" cy=\"12.5\" r=\"1.75\"/>\
                  <circle cx=\"11.5\" cy=\"5.5\" r=\"1.75\"/><path d=\"M4.5 5.25v5.5M11.5 7.25c0 2.5-3 2.5-7 3.5\"/>",
             ),
-            Self::Lead => ("lead", "<path d=\"M8 2l6 6-6 6-6-6z\" class=\"filled\"/>"),
+            Self::New => ("action", "<path d=\"M8 3v10M3 8h10\"/>"),
             Self::Stop => (
                 "action",
                 "<rect x=\"3.5\" y=\"3.5\" width=\"9\" height=\"9\" rx=\"1.5\" class=\"filled\"/>",
@@ -44,6 +44,6 @@ impl Icon {
 pub fn icon(icon: Icon) -> String {
     let (class, shape) = icon.parts();
     format!(
-        "<svg class=\"icon-svg {class}\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">{shape}</svg>"
+        "<svg class=\"icon-svg {class}\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">{shape}</svg>"
     )
 }

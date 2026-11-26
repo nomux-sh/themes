@@ -1,6 +1,6 @@
-//! Direction D1 "Orca Order": the state glyph on the left of each row, a
-//! data tail on the right, a worktree of two lines, the children of a
-//! session closed to a count.
+//! The rows of the sidebar for one project: the state glyph on the left of
+//! each row, a data tail on the right, a worktree of two lines, the children
+//! of a session closed to a count.
 
 use super::icon::Icon;
 use super::row::{Face, Row, Slot, actions, age, branch, child_count};
@@ -11,21 +11,21 @@ pub fn rows(project: &Project) -> Vec<Row> {
 }
 
 fn worktree(worktree: &Worktree) -> Vec<Row> {
-    let aggregate = if worktree.open {
-        None
+    let (aggregate, caret) = if worktree.open {
+        (None, Icon::Open)
     } else {
-        worktree.worst().map(|session| session.state)
-    };
-    let caret = if worktree.open {
-        Icon::Open
-    } else {
-        Icon::Closed
+        (worktree.worst().map(|session| session.state), Icon::Closed)
     };
     let mut rows = vec![Row {
         two_line: true,
-        left: Some(Slot::glyph(aggregate).with_hover(caret)),
         secondary: branch(&worktree.branch_line()),
-        ..Row::new(0, Face::Worktree, worktree.name)
+        hover_tail: actions(&[Icon::New, Icon::Menu]),
+        ..Row::new(
+            0,
+            Face::Worktree,
+            worktree.name,
+            Slot::glyph(aggregate).with_hover(caret),
+        )
     }];
     if worktree.open {
         rows.extend(worktree.ordered().flat_map(session));
@@ -46,10 +46,15 @@ fn session(session: &Session) -> Vec<Row> {
     }
     tail.push_str(&age(session));
     let mut rows = vec![Row {
-        left: Some(Slot::glyph(state)),
         tail,
-        hover_tail: actions(),
-        ..Row::session(1, Face::of(session), session, session.doing)
+        hover_tail: actions(&[Icon::Stop, Icon::Menu]),
+        ..Row::session(
+            1,
+            Face::of(session),
+            session,
+            session.doing,
+            Slot::glyph(state),
+        )
     }];
     if open {
         rows.extend(session.children.iter().map(child));
@@ -59,8 +64,13 @@ fn session(session: &Session) -> Vec<Row> {
 
 fn child(child: &Session) -> Row {
     Row {
-        left: Some(Slot::glyph(Some(child.state))),
         tail: age(child),
-        ..Row::session(2, Face::Child, child, &child.described())
+        ..Row::session(
+            2,
+            Face::Child,
+            child,
+            &child.described(),
+            Slot::glyph(Some(child.state)),
+        )
     }
 }
