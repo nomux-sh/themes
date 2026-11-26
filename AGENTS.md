@@ -18,7 +18,7 @@ Rules for coding agents and for people who work in this repository. `CLAUDE.md` 
 | `themes/` | The theme files. `base-dark.toml` and `base-light.toml` set each token. |
 | `schema/theme.schema.json` | JSON Schema of a theme file. Output of `scripts/generate.sh`. Not edited by hand. |
 | `docs/tokens.md` | The token reference. Output of `scripts/generate.sh`. Not edited by hand. |
-| `docs/sidebar.md` | The specification of the sidebar directions that the preview page shows. |
+| `docs/sidebar.md` | The specification of the sidebar of the desktop client. The preview page shows it. |
 | `scripts/` | `generate.sh` and `check-generated.sh` for the generated files, `release-notes.sh` for the release workflow. |
 | `THIRD_PARTY.md`, `NOTICE` | The sources and the licenses of the palettes that are not from nomux. |
 | `Cargo.toml`, `deny.toml`, `rust-toolchain.toml` | Workspace members and shared versions, license and source policy, pinned toolchain. |
