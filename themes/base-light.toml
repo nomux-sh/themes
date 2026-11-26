@@ -96,7 +96,7 @@ appearance = "light"
 "density.compact.row-height" = "24px"
 "density.compact.control-height" = "24px"
 "density.compact.padding" = "8px"
-"density.compact.two-line-row-height" = "36px"
+"density.compact.two-line-row-height" = "40px"
 
 "size.icon" = "16px"
 "size.mark" = "8px"
