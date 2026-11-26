@@ -55,6 +55,7 @@ fn a_theme_that_breaks_the_rules_gets_one_violation_for_each_rule() {
             "space.2" = "6px"
             "density.compact.two-line-row-height" = "34px"
             "motion.slow" = "400ms"
+            "motion.indicator" = "200ms"
             "##,
         )
         .unwrap();
@@ -96,6 +97,13 @@ fn a_theme_that_breaks_the_rules_gets_one_violation_for_each_rule() {
         violation,
         Violation::MotionOutOfRange {
             token: DurationToken::MotionSlow,
+            ..
+        }
+    )));
+    assert!(violations.iter().any(|violation| matches!(
+        violation,
+        Violation::MotionOutOfRange {
+            token: DurationToken::MotionIndicator,
             ..
         }
     )));

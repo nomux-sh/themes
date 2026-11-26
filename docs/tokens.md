@@ -21,7 +21,7 @@ The token set applies the visual rules of nomux. The `check` command of `nomux-t
 - **Hairlines.** Lines are 0.5 px to 1 px wide and have low alpha. A dark theme uses a line that is darker than the surface.
 - **Typography.** One UI font and one monospace font. The scale is title 13 px medium, row 12 px, metadata 11 px.
 - **Spacing.** Checked: each `space.*` and `density.*` length is a multiple of 4 px. There are two densities: comfortable and compact.
-- **Motion.** Checked: each duration is from 120 ms to 200 ms. Motion uses ease-out and occurs only on a state change.
+- **Motion.** Checked: each transition is from 120 ms to 200 ms, and one cycle of a continuous indicator is from 800 ms to 1600 ms. A transition uses ease-out and occurs only on a state change. The only continuous indicator is the working glyph. The client stops all motion when the user asks for reduced motion.
 - **Content contrast.** Checked: `terminal.foreground` on `terminal.background`, each `syntax.*` colour on `surface.base`, and `text.primary` on each diff background have a contrast of 4.5:1 or more. The terminal cursor and the diff gutters have 3:1 or more.
 
 Contrast is the contrast ratio of WCAG 2.x. A transparent colour is painted over its background before the calculation.
@@ -39,7 +39,7 @@ Contrast is the contrast ratio of WCAG 2.x. A transparent colour is painted over
 
 ## Token list
 
-The token set has 85 tokens.
+The token set has 86 tokens.
 
 ### Surfaces
 
@@ -237,10 +237,11 @@ One corner radius for each elevation level.
 
 ### Motion
 
-Durations and the easing of transitions.
+The durations of transitions and of the continuous indicator, and the easing of transitions.
 
 | Token | Kind | Role | Use |
 |---|---|---|---|
 | `motion.fast` | duration | The duration of a colour change, from 120 ms to 200 ms. | A state change of a mark, a hover fill and a selection fill. |
 | `motion.slow` | duration | The duration of a size change, from 120 ms to 200 ms. | A row that expands, a panel that opens and a Tab that moves. |
-| `motion.easing` | easing | The one easing of the UI: ease-out. | Each transition. Motion occurs only on a state change, and the client stops it when the user asks for reduced motion. |
+| `motion.indicator` | duration | The duration of one cycle of a continuous indicator, from 800 ms to 1600 ms. | One turn of the working glyph. The indicator turns at a constant speed while the agent works. |
+| `motion.easing` | easing | The one easing of the UI: ease-out. | Each transition. A transition occurs only on a state change. A continuous indicator does not use an easing. The client stops all motion when the user asks for reduced motion. |

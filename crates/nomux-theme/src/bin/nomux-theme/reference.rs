@@ -27,7 +27,7 @@ The token set applies the visual rules of nomux. The `check` command of `nomux-t
 - **Hairlines.** Lines are 0.5 px to 1 px wide and have low alpha. A dark theme uses a line that is darker than the surface.
 - **Typography.** One UI font and one monospace font. The scale is title 13 px medium, row 12 px, metadata 11 px.
 - **Spacing.** Checked: each `space.*` and `density.*` length is a multiple of @GRID@ px. There are two densities: comfortable and compact.
-- **Motion.** Checked: each duration is from @MOTION_MIN@ ms to @MOTION_MAX@ ms. Motion uses ease-out and occurs only on a state change.
+- **Motion.** Checked: each transition is from @MOTION_MIN@ ms to @MOTION_MAX@ ms, and one cycle of a continuous indicator is from @INDICATOR_MIN@ ms to @INDICATOR_MAX@ ms. A transition uses ease-out and occurs only on a state change. The only continuous indicator is the working glyph. The client stops all motion when the user asks for reduced motion.
 - **Content contrast.** Checked: `terminal.foreground` on `terminal.background`, each `syntax.*` colour on `surface.base`, and `text.primary` on each diff background have a contrast of @TEXT@:1 or more. The terminal cursor and the diff gutters have @MARK@:1 or more.
 
 Contrast is the contrast ratio of WCAG 2.x. A transparent colour is painted over its background before the calculation.
@@ -102,7 +102,7 @@ const GROUPS: [(&str, &str, &str); 17] = [
     (
         "motion",
         "Motion",
-        "Durations and the easing of transitions.",
+        "The durations of transitions and of the continuous indicator, and the easing of transitions.",
     ),
 ];
 
@@ -120,6 +120,14 @@ pub fn render() -> String {
         .replace(
             "@MOTION_MAX@",
             &rules::MOTION_RANGE.1.as_millis().to_string(),
+        )
+        .replace(
+            "@INDICATOR_MIN@",
+            &rules::INDICATOR_RANGE.0.as_millis().to_string(),
+        )
+        .replace(
+            "@INDICATOR_MAX@",
+            &rules::INDICATOR_RANGE.1.as_millis().to_string(),
         );
     for kind in [
         ValueKind::Color,
