@@ -13,8 +13,6 @@
 .icon-svg { width: var(--size-icon); height: var(--size-icon); flex: none; display: block; overflow: visible; }
 .icon-svg.branch { display: inline-block; width: var(--font-meta-size); height: var(--font-meta-size); margin-right: var(--space-1); vertical-align: text-bottom; }
 
-.tile .glyph { position: absolute; top: calc(var(--space-1) / -2); right: calc(var(--space-1) / -2); border-radius: 50%; background: var(--surface-sunken); outline: var(--focus-ring-width) solid var(--surface-sunken); }
-
 .sidebar { background: var(--surface-base); padding: var(--space-1); display: flex; flex-direction: column; width: 17rem; min-width: 0; }
 .sidebar-header {
   display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
@@ -80,29 +78,67 @@
 .window.sidebar-window { display: flex; width: max-content; }
 @media (max-width: 30rem) { .theme { padding: var(--space-4); } }
 
-/* The section "Groups (alternatives)": the rows of groups and projects, the
-   column of alternative 2 and the group tiles of alternative 3. */
-.tree-row.group .primary { font-size: var(--font-row-size); font-weight: var(--font-title-weight); color: var(--text-secondary); }
-.tree-row.project .primary { font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
-.navigator { background: var(--surface-sunken); padding: var(--space-1); display: flex; flex-direction: column; width: calc(var(--space-4) * 14); flex: none; }
-.rail.named { width: calc(var(--space-4) * 12); }
-.rail-item { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
-.rail-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); }
-.rail-item.selected .rail-name { color: var(--text-primary); }
-.rail-children { display: flex; flex-direction: column; gap: var(--space-2); padding-bottom: var(--space-2); }
-.tile .caret { color: var(--text-secondary); }
-.minis { display: grid; grid-template-columns: repeat(2, calc((var(--size-icon) - var(--space-1)) / 2)); grid-auto-rows: calc((var(--size-icon) - var(--space-1)) / 2); gap: var(--space-1); }
+/* The project rail. Each tile is --rail-padding from the left edge of the
+   rail, at each depth. An open group is a strip: each level of strips is one
+   --rail-step narrower on each side, to five levels, and one step of
+   fill.hover lighter. */
+.rail {
+  --rail-padding: var(--space-3); --rail-margin: calc(var(--space-1) / 2); --rail-step: calc(var(--space-1) / 2);
+  --rail-fill: var(--surface-sunken); --depth: 0;
+  display: flex; flex-direction: column; gap: var(--space-2); flex: none;
+  width: calc(var(--control-height) + var(--rail-padding) * 2); padding: var(--space-2) var(--rail-margin);
+  background: var(--surface-sunken);
+}
+.rail.expanded { width: calc(var(--space-4) * 12); }
+.rail-group {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-1) var(--rail-step); margin-block: calc(var(--space-1) * -1);
+  border-radius: var(--radius-raised); background: var(--rail-fill);
+}
+.rail-group.deep { padding-inline: 0; }
+.rail-item { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-left: calc(var(--rail-padding) - var(--rail-margin) - var(--rail-step) * var(--depth)); }
+.rail.expanded .rail-item { padding-right: var(--space-2); }
+.tile {
+  position: relative; flex: none; display: grid; place-items: center;
+  width: var(--control-height); height: var(--control-height); border-radius: var(--radius-button);
+  background-color: var(--surface-button); color: var(--text-secondary);
+  font-size: var(--font-title-size); font-weight: var(--font-title-weight);
+  transition: background-color var(--motion-fast) var(--motion-easing);
+}
+.tile.open { background-color: transparent; color: var(--text-muted); }
+.tile.selected { color: var(--text-primary); }
+.tile.selected::before {
+  content: ""; position: absolute; left: calc(var(--rail-padding) * -1); top: calc((var(--control-height) - var(--size-icon)) / 2);
+  width: var(--focus-ring-width); height: var(--size-icon); border-radius: 0 var(--focus-ring-width) var(--focus-ring-width) 0; background: var(--accent);
+}
+/* The mark at the corner of a tile is cut out of the fill behind the tile. */
+.tile .glyph {
+  position: absolute; top: calc(var(--space-1) / -2 - var(--focus-ring-width)); right: calc(var(--space-1) / -2 - var(--focus-ring-width));
+  padding: var(--focus-ring-width); border-radius: 50%; background: var(--rail-fill);
+}
+.minis { display: grid; grid-template-columns: repeat(2, calc((var(--size-icon) - var(--space-1)) / 2)); grid-template-rows: repeat(2, calc((var(--size-icon) - var(--space-1)) / 2)); gap: var(--space-1); }
 .minis > span { border-radius: calc(var(--radius-button) / 4); background-color: var(--text-muted); }
+.minis > .hollow { background-color: transparent; box-shadow: inset 0 0 0 var(--line-width) var(--text-muted); }
+.rail-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); font-size: var(--font-row-size); font-weight: var(--font-row-weight); }
+.tile.group + .rail-name { font-weight: var(--font-title-weight); }
+.tile.selected + .rail-name { color: var(--text-primary); }
 .tooltip {
-  position: absolute; left: calc(100% + var(--space-2)); top: 50%; transform: translateY(-50%); z-index: 1;
-  display: flex; align-items: center; height: var(--control-height); padding: 0 var(--space-2);
-  border-radius: var(--radius-button); background: var(--surface-floating); color: var(--text-primary);
+  position: absolute; left: calc(100% + var(--rail-padding) + var(--space-1)); top: 50%; transform: translateY(-50%); z-index: 1;
+  display: flex; align-items: baseline; gap: var(--space-2); padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-floating); background: var(--surface-floating); color: var(--text-primary);
   box-shadow: 0 var(--space-1) var(--space-3) var(--shadow-floating);
   font-size: var(--font-row-size); font-weight: var(--font-row-weight); white-space: nowrap;
 }
-.alternative { display: flex; flex-direction: column; gap: var(--space-3); }
+.tooltip .detail { color: var(--text-muted); font-size: var(--font-meta-size); font-weight: var(--font-meta-weight); }
+
+/* The part "Groups" of the section "Sidebar" */
+.groups { display: flex; flex-direction: column; gap: var(--space-3); }
 .theme h4 { margin: 0; font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
-.group-frames { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) calc(var(--space-4) * 2); }
-.group-frames > p { flex-basis: 100%; }
-.group-frames > figure { width: min-content; }
-.rail-item.selected, .rail-item.hover { background-image: none; }
+.rail-frames { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) calc(var(--space-4) * 2); }
+.rail-frames > p { flex-basis: 100%; }
+.rail-frames > figure { width: calc(var(--space-4) * 6); }
+.rail-frames > figure.pointer { width: calc(var(--space-4) * 11); }
+.rail-frames > figure.expanded { width: calc(var(--space-4) * 12); }
+.window.rail-window { display: flex; width: max-content; overflow: visible; }
+.rail-window > .rail { border-radius: inherit; }
+.scroll > .rail-window { height: calc(var(--control-height) * 12); overflow: hidden; }

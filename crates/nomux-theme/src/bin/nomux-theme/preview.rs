@@ -83,7 +83,7 @@ fn section(theme: &Theme) -> String {
          <header>\n<h2>{name}</h2>\n<p class=\"meta\">{id} · {appearance} · {origins}</p>\n</header>\n\
          <p class=\"summary\"><span class=\"mark {state}\"></span>{passed} of {total} contrast pairs pass · \
          {count} rule violations</p>\n{violation_list}\
-         <div class=\"figures wide\">\n{workspaces}</div>\n{sidebar}{groups}<div class=\"figures\">\n{DETAILS}</div>\n{table}</section>\n",
+         <div class=\"figures wide\">\n{workspaces}</div>\n{sidebar}<div class=\"figures\">\n{DETAILS}</div>\n{table}</section>\n",
         id = theme.id(),
         name = escape(theme.name()),
         appearance = theme.appearance(),
@@ -92,11 +92,6 @@ fn section(theme: &Theme) -> String {
         count = violations.len(),
         table = swatches::table(theme, &checks),
         sidebar = sidebar::section(theme.name()),
-        groups = if theme.id().starts_with("nomux") {
-            sidebar::groups_section(theme.name())
-        } else {
-            String::new()
-        },
     )
 }
 

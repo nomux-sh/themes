@@ -2,36 +2,30 @@
 //! the sidebar of the workspace mock-up. The specification is
 //! `docs/sidebar.md`.
 
-mod alternative;
 mod group;
 mod icon;
+mod rail;
 mod row;
 mod sample;
 mod tree;
 
 use super::escape;
-use super::glyph::{State, glyph};
-pub use alternative::section as groups_section;
+use group::GroupFrame;
 use row::Row;
 pub use sample::Frame;
-use sample::Project;
 
 /// The sidebar in one frame. The density comes from the class of an
 /// ancestor.
 pub fn sidebar(frame: Frame) -> String {
-    render(&frame.project())
-}
-
-/// The sidebar of one project.
-fn render(project: &Project) -> String {
+    let project = frame.project();
     let body = if project.worktrees.is_empty() {
         empty_state()
     } else {
-        tree::rows(project).iter().map(Row::render).collect()
+        tree::rows(&project).iter().map(Row::render).collect()
     };
     format!(
         "<div class=\"sidebar\">\n{header}{body}</div>\n",
-        header = row::header(project),
+        header = row::header(&project),
     )
 }
 
@@ -43,25 +37,10 @@ fn empty_state() -> String {
         .to_owned()
 }
 
-/// The project rail: one tile for each project, with the glyph of its most
-/// urgent state.
+/// The project rail at rest: the groups on the path of the selected project
+/// are open.
 pub fn rail() -> String {
-    let tiles: String = [
-        ("A", Some(State::NeedsYou), true),
-        ("B", Some(State::Working), false),
-        ("D", Some(State::Error), false),
-        ("N", None, false),
-    ]
-    .iter()
-    .map(|(letter, state, selected)| {
-        format!(
-            "<div class=\"tile{}\">{letter}{}</div>",
-            if *selected { " selected" } else { "" },
-            state.map(glyph).unwrap_or_default()
-        )
-    })
-    .collect();
-    format!("<div class=\"rail\">{tiles}</div>\n")
+    rail::rail(GroupFrame::Rest)
 }
 
 /// The section "Sidebar" of a theme: each frame in both densities.
@@ -70,8 +49,9 @@ pub fn section(theme_name: &str) -> String {
     format!(
         "<div class=\"sidebar-section\">\n<header>\n<h3>Sidebar</h3>\n<p class=\"meta\">The sidebar of {name} \
          in each state, comfortable density on the left and compact density on the right. \
-         The specification is docs/sidebar.md.</p>\n</header>\n<div class=\"sidebar-frames\">\n{frames}</div>\n</div>\n",
+         The specification is docs/sidebar.md.</p>\n</header>\n<div class=\"sidebar-frames\">\n{frames}</div>\n{groups}</div>\n",
         name = escape(theme_name),
+        groups = rail::groups(),
     )
 }
 
@@ -98,6 +78,7 @@ fn figure(frame: Frame) -> String {
 
 #[cfg(test)]
 mod tests {
+    use super::super::glyph::{State, glyph};
     use super::*;
 
     fn count(frame: Frame) -> usize {

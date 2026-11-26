@@ -82,10 +82,8 @@ figure { display: flex; flex-direction: column; gap: var(--space-2); min-width: 
 .menu { background: var(--surface-floating); border-radius: var(--radius-floating); padding: var(--space-1); box-shadow: 0 var(--space-2) calc(var(--space-4) * 2) var(--shadow-floating); }
 .actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 
-/* Workspace: project rail, tab bar, team roster, terminal */
+/* Workspace: tab bar, team roster, terminal. The project rail is in sidebar.css. */
 .window { display: grid; grid-template-columns: auto 17rem minmax(0, 1fr); border-radius: var(--radius-floating); overflow: hidden; outline: var(--line-width) solid var(--line-hairline); }
-.rail { background: var(--surface-sunken); padding: var(--space-2); display: flex; flex-direction: column; gap: var(--space-2); }
-.tile { position: relative; width: var(--control-height); height: var(--control-height); border-radius: var(--radius-button); background-color: var(--surface-button); color: var(--text-secondary); display: grid; place-items: center; font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
 .title-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); height: var(--control-height); padding: 0 var(--padding); font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
 .pane { display: flex; flex-direction: column; min-width: 0; background: var(--terminal-background); border-left: var(--line-width) solid var(--line-divider); }
 .tabbar { display: flex; align-items: center; gap: var(--space-1); background: var(--surface-sunken); padding: var(--space-1) var(--space-2); overflow: hidden; }

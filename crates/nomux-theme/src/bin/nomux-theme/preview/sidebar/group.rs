@@ -1,8 +1,8 @@
-//! The one sample tree of groups and projects of the group alternatives,
-//! and the frames that show it in one state each.
+//! The one sample tree of groups and projects of the project rail, and the
+//! frames that show it in one state each.
 
 use super::super::glyph::State;
-use super::sample::{Frame, Project};
+use super::sample::Frame;
 
 pub enum Node {
     Group(Group),
@@ -23,6 +23,8 @@ pub struct Entry {
     /// The most urgent state of the project.
     pub state: State,
     pub selected: bool,
+    pub hover: bool,
+    pub focus: bool,
 }
 
 impl Node {
@@ -37,6 +39,18 @@ impl Node {
         match self {
             Self::Group(group) => group.projects(),
             Self::Project(_) => 1,
+        }
+    }
+}
+
+impl Entry {
+    fn new(name: &'static str, state: State) -> Self {
+        Self {
+            name,
+            state,
+            selected: false,
+            hover: false,
+            focus: false,
         }
     }
 }
@@ -62,29 +76,11 @@ impl Group {
         self.nodes.iter().map(Node::projects).sum()
     }
 
-    /// The most urgent state of the projects that are not in `inner`.
-    pub fn worst_outside(&self, inner: &Self) -> Option<State> {
-        self.nodes
-            .iter()
-            .filter_map(|node| match node {
-                Node::Group(group) if std::ptr::eq(group, inner) => None,
-                Node::Group(group) => group.worst_outside(inner),
-                Node::Project(entry) => Some(entry.state),
-            })
-            .min()
-    }
-
-    /// The group at the end of a path of group names.
-    pub fn find(&self, path: &[&str]) -> &Self {
-        path.iter().fold(self, |group, name| {
-            group
-                .nodes
-                .iter()
-                .find_map(|node| match node {
-                    Node::Group(inner) if inner.name == *name => Some(inner),
-                    _ => None,
-                })
-                .expect("the sample has the group")
+    /// The group holds the selected project, at any depth.
+    pub fn holds_selected(&self) -> bool {
+        self.nodes.iter().any(|node| match node {
+            Node::Group(group) => group.holds_selected(),
+            Node::Project(entry) => entry.selected,
         })
     }
 
@@ -101,54 +97,53 @@ impl Group {
         })
     }
 
-    /// The selected project.
-    pub fn selected(&self) -> &Entry {
-        self.find_selected()
-            .expect("the sample has a selected project")
-    }
-
-    pub fn find_selected(&self) -> Option<&Entry> {
-        self.nodes.iter().find_map(|node| match node {
-            Node::Group(group) => group.find_selected(),
-            Node::Project(entry) => entry.selected.then_some(entry),
-        })
-    }
-
-    fn selected_mut(&mut self) -> &mut Entry {
-        fn find(group: &mut Group) -> Option<&mut Entry> {
+    fn entry_mut(&mut self, name: &str) -> &mut Entry {
+        fn find<'a>(group: &'a mut Group, name: &str) -> Option<&'a mut Entry> {
             group.nodes.iter_mut().find_map(|node| match node {
-                Node::Group(inner) => find(inner),
-                Node::Project(entry) => entry.selected.then_some(entry),
+                Node::Group(inner) => find(inner, name),
+                Node::Project(entry) => (entry.name == name).then_some(entry),
             })
         }
-        find(self).expect("the sample has a selected project")
+        find(self, name).expect("the sample has the project")
+    }
+
+    fn close_all(&mut self) {
+        for node in &mut self.nodes {
+            if let Node::Group(group) = node {
+                group.open = false;
+                group.close_all();
+            }
+        }
+    }
+
+    /// Opens each group on the path.
+    fn open(&mut self, path: &[&str]) {
+        for depth in 1..=path.len() {
+            self.find_mut(&path[..depth]).open = true;
+        }
     }
 }
 
-/// The path of the group that holds the selected project at rest.
-pub const WEB: [&str; 3] = ["Client work", "Acme", "Web"];
-/// The path of the deepest group of the frame "Depth".
-pub const DEEPEST: [&str; 5] = ["Client work", "Acme", "Web", "Legacy", "2019"];
+/// The path of the group that holds the selected project.
+const WEB: [&str; 3] = ["Client work", "Acme", "Web"];
+const SELECTED: &str = "acme-web";
 
 /// The sample: nine projects in four groups, one group in a group in a
-/// group. The selected project is the project of the sidebar sample.
+/// group. The selected project is the project of the sidebar sample. At
+/// rest the groups on the path of the selected project are open.
 fn sample() -> Group {
-    let project = |name, state| {
-        Node::Project(Entry {
-            name,
-            state,
-            selected: false,
-        })
-    };
+    let project = |name, state| Node::Project(Entry::new(name, state));
     let selected = Frame::Rest.project();
     let web = Group::new(
         "Web",
         true,
         vec![
             Node::Project(Entry {
-                name: selected.name,
-                state: selected.worst().expect("the sample has Sessions"),
                 selected: true,
+                ..Entry::new(
+                    selected.name,
+                    selected.worst().expect("the sample has Sessions"),
+                )
             }),
             project("acme-admin", State::Working),
         ],
@@ -182,90 +177,121 @@ fn sample() -> Group {
     )
 }
 
-/// One state of the tree of groups that the page shows.
+/// Web holds Legacy, Legacy holds 2019, 2019 holds acme-shop-2019: five
+/// levels of groups.
+fn add_five_levels(tree: &mut Group) {
+    let year = Group::new(
+        "2019",
+        true,
+        vec![Node::Project(Entry::new("acme-shop-2019", State::Idle))],
+    );
+    let legacy = Group::new("Legacy", true, vec![Node::Group(year)]);
+    tree.find_mut(&WEB).nodes.push(Node::Group(legacy));
+}
+
+/// One state of the project rail that the page shows.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum GroupFrame {
+    Closed,
+    OneOpen,
+    TwoLevels,
     Rest,
-    Aggregate,
-    Depth,
+    FiveLevels,
     Empty,
-    LongNames,
-    Selected,
+    PointerOnProject,
+    PointerOnGroup,
+    Scroll,
+    Expanded,
 }
 
 impl GroupFrame {
-    pub const ALL: [Self; 6] = [
+    pub const ALL: [Self; 10] = [
+        Self::Closed,
+        Self::OneOpen,
+        Self::TwoLevels,
         Self::Rest,
-        Self::Aggregate,
-        Self::Depth,
+        Self::FiveLevels,
         Self::Empty,
-        Self::LongNames,
-        Self::Selected,
+        Self::PointerOnProject,
+        Self::PointerOnGroup,
+        Self::Scroll,
+        Self::Expanded,
     ];
 
     pub const fn caption(self) -> &'static str {
         match self {
-            Self::Rest => {
-                "(a) Rest: Client work, Acme and Web open, Personal closed. acme-web is selected, its worktrees are closed"
+            Self::Closed => {
+                "(a) All groups closed. Client work holds the selected project and a project that needs you"
             }
-            Self::Aggregate => {
-                "(b) Client work closed: it shows the needs-you state of acme-web, three levels down. The pointer is on Personal"
-            }
-            Self::Depth => {
-                "(c) Five levels of groups: Web holds Legacy, Legacy holds 2019, 2019 holds acme-shop-2019"
-            }
-            Self::Empty => "(d) Personal open with the empty group Later",
-            Self::LongNames => "(e) Long names of groups and of the selected project",
-            Self::Selected => {
-                "(f) The selected project acme-web with fix-login open: its Sessions and the selected Claude row"
-            }
+            Self::OneOpen => "(b) Personal open. blog has the keyboard focus",
+            Self::TwoLevels => "(c) Two levels open: Client work and Acme. Web is closed",
+            Self::Rest => "(d) Three levels open: the selected project acme-web in Web",
+            Self::FiveLevels => "(e) Five levels open: Web, Legacy, 2019",
+            Self::Empty => "(f) Personal open with the empty group Later, open",
+            Self::PointerOnProject => "(g) Pointer on acme-admin",
+            Self::PointerOnGroup => "(h) Pointer on Personal",
+            Self::Scroll => "(i) Taller than the window: the rail scrolls",
+            Self::Expanded => "(j) The expanded rail with long names",
         }
+    }
+
+    /// The class of the figure: room for a tooltip, a window of fixed
+    /// height, or the width of the expanded rail.
+    pub const fn class(self) -> &'static str {
+        match self {
+            Self::PointerOnProject | Self::PointerOnGroup => "pointer",
+            Self::Scroll => "scroll",
+            Self::Expanded => "expanded",
+            _ => "",
+        }
+    }
+
+    /// The rail shows the names of its tiles.
+    pub fn expanded(self) -> bool {
+        self == Self::Expanded
     }
 
     /// The tree of groups in this frame.
     pub fn tree(self) -> Group {
         let mut tree = sample();
         match self {
-            Self::Rest | Self::Selected => {}
-            Self::Aggregate => {
-                tree.find_mut(&WEB[..1]).open = false;
-                tree.find_mut(&["Personal"]).hover = true;
+            Self::Rest => {}
+            Self::Closed => tree.close_all(),
+            Self::OneOpen => {
+                tree.close_all();
+                tree.open(&["Personal"]);
+                tree.entry_mut("blog").focus = true;
             }
-            Self::Depth => {
-                let leaf = Node::Project(Entry {
-                    name: "acme-shop-2019",
-                    state: State::Idle,
-                    selected: false,
-                });
-                let year = Group::new("2019", true, vec![leaf]);
-                let legacy = Group::new("Legacy", true, vec![Node::Group(year)]);
-                tree.find_mut(&WEB).nodes.push(Node::Group(legacy));
+            Self::TwoLevels => {
+                tree.close_all();
+                tree.open(&WEB[..2]);
             }
+            Self::FiveLevels => add_five_levels(&mut tree),
             Self::Empty => {
+                tree.close_all();
                 let personal = tree.find_mut(&["Personal"]);
                 personal.open = true;
                 personal
                     .nodes
-                    .push(Node::Group(Group::new("Later", false, vec![])));
+                    .push(Node::Group(Group::new("Later", true, vec![])));
             }
-            Self::LongNames => {
+            Self::PointerOnProject => tree.entry_mut("acme-admin").hover = true,
+            Self::PointerOnGroup => {
+                tree.close_all();
+                tree.find_mut(&["Personal"]).hover = true;
+            }
+            Self::Scroll => {
+                add_five_levels(&mut tree);
+                tree.open(&["Personal"]);
+            }
+            Self::Expanded => {
+                add_five_levels(&mut tree);
                 tree.find_mut(&WEB[..2]).name = "Acme Corporation customer platform";
                 tree.find_mut(&["Client work", "Acme Corporation customer platform", "Web"])
                     .name = "Storefront and checkout for the web";
-                tree.selected_mut().name = "acme-web-storefront-and-checkout-2026";
+                tree.entry_mut(SELECTED).name = "acme-web-storefront-and-checkout-2026";
             }
         }
         tree
-    }
-
-    /// The selected project with its worktrees: open only in the frame
-    /// "Selected".
-    pub fn project(self) -> Project {
-        let mut project = Frame::Rest.project();
-        project.name = self.tree().selected().name;
-        if self != Self::Selected {
-            project.close_all_but("");
-        }
-        project
     }
 }

@@ -4,7 +4,7 @@ This document specifies the sidebar of the nomux desktop client. An engineer can
 
 Each value is a token from [tokens.md](tokens.md). The pixel values are the values of the base themes. A theme can change a token, thus the client reads the token and does not use the pixel value.
 
-The preview page shows the sidebar in the section "Sidebar" of each theme, in the two densities and in seven frames. The command `nomux-theme preview` writes the page.
+The preview page shows the sidebar in the section "Sidebar" of each theme, in the two densities and in seven frames, and the project rail in the part "Groups" of the section, in ten frames. The command `nomux-theme preview` writes the page.
 
 ## Structure
 
@@ -20,7 +20,7 @@ From top to bottom the sidebar has:
 
 A row has one job: a worktree row identifies a worktree, a Session row reports one Session, a child row reports one child.
 
-The row of a group of projects is not decided. The preview page shows three alternatives in the section "Groups (alternatives)" of nomux Dark and nomux Light. This document will specify the alternative that is chosen.
+The project rail holds the projects and the groups of projects. The section [Project rail](#project-rail) specifies it.
 
 ## Geometry
 
@@ -116,7 +116,7 @@ The sequence of the table is the priority: needs you is the most urgent, no proc
 - A closed worktree shows the glyph of the most urgent state of its Sessions in its slot.
 - A closed agent with children, or a closed Team, shows the glyph of its most urgent child and "+N" in its tail. Its own state stays in its slot.
 - An open parent shows no aggregate. An open worktree has an empty slot. An open Team has an empty slot: its members show their states.
-- The project tile in the rail shows the most urgent state of the project.
+- The project tile in the rail shows the most urgent state of the project. A closed group tile shows the most urgent state of each project in the group and in its groups.
 
 ## Sort
 
@@ -150,10 +150,104 @@ A project without worktrees shows the header and then:
 
 The text starts at the header text x. The gap between the lines is `space.1`. The button is `space.2` below the text, and the block ends `space.3` above the bottom of the sidebar.
 
+## Project rail
+
+The rail is the column at the left of the sidebar. It holds one tile for each project and each group of projects, in the sequence of the user. A group holds projects and groups, to any depth. The rail selects the project that the sidebar shows.
+
+### Groups open in place
+
+- A click on a group tile opens the group in place. The group tile becomes the first tile of a **strip**: a rounded area behind the tile. The children of the group follow below it, in the strip.
+- A group in an open group opens in the same way, inside the strip of its parent. Thus the strips nest.
+- The strip grows down as the content grows. The tiles below it move down.
+- There is no step into a group, no back tile and no path. The rail stays one column.
+- A click on the tile of an open group closes it. The strip and its children go away. The groups in it keep their state: when the user opens the group again, they show as before.
+
+### Geometry
+
+The x positions are measured from the left edge of the rail. `T` is the tile size: `density.*.control-height`. `D` is the depth of an open group: 1 for a group at the top of the rail.
+
+| Item | Token | Comfortable | Compact |
+|---|---|---|---|
+| Tile size, for each tile and each depth | `density.*.control-height` | 28 px | 24 px |
+| Tile x, for each tile and each depth | `space.3` | 12 px | 12 px |
+| Tile centre x | `space.3` + `T` / 2 | 26 px | 24 px |
+| Rail width, closed | `T` + 2 × `space.3` | 52 px | 48 px |
+| Rail width, expanded (default) | 12 × `space.4` | 192 px | 192 px |
+| Padding of the rail, top and bottom | `space.2` | 8 px | 8 px |
+| Gap between two tiles | `space.2` | 8 px | 8 px |
+| Strip of depth `D`: x | `space.1` / 2 × `D` | 2, 4, 6, 8, 10 px | 2, 4, 6, 8, 10 px |
+| Strip of depth `D`: width (closed rail) | rail width − 2 × strip x | 48, 44, 40, 36, 32 px | 44, 40, 36, 32, 28 px |
+| Strip: space above its first tile and below its last tile | `space.1` | 4 px | 4 px |
+| Strip corner radius | `radius.raised` | 8 px | 8 px |
+| Tile corner radius | `radius.button` | 6 px | 6 px |
+| Label of a project tile | `font.title.size`, `font.title.weight` | 13 px | 13 px |
+
+- **Inset rule.** Each level of strips is `space.1` / 2 narrower on each side than its parent strip. The tiles do not move: each tile has the same x and the same size at each depth, thus all tiles have one centre line. From depth 6, a strip has the width of depth 5.
+- A strip takes the `space.1` above its first tile and below its last tile from the gap between two tiles. Thus a group tile does not move when the group opens, and between a strip and the next tile 4 px stay.
+- **Fill.** A strip of depth `D` is `D` layers of `fill.hover` over `surface.sunken`. Thus each level is one step lighter in a dark theme and one step darker in a light theme. The strip has no border and no shadow.
+- The rail is `surface.sunken`.
+
+### Tiles
+
+| Tile | Face | Background | Corner mark |
+|---|---|---|---|
+| Project | the label, `text.secondary` | `surface.button` | the most urgent state of the project |
+| Closed group | the **mini grid**: one square for each of the first four children, filled for a project, hollow for a group | `surface.button` | the aggregate state |
+| Empty closed group | no face | `surface.button` | none |
+| Open group | the open caret, `size.icon`, `text.muted` | none: the strip shows behind it | none |
+
+- **Mini grid.** 2 × 2 squares of (`size.icon` − `space.1`) / 2 (6 px), with a gap of `space.1`: 16 px in all. A filled square is `text.muted` with the radius `radius.button` / 4. A hollow square has a line of `line.width` in `text.muted`. The squares fill from the top left, by rows. The grid shows what the group holds and how much (one to four), and its shape is different from a label, thus a group tile never looks like a project tile.
+- **Open and closed.** A closed group is a tile with a background and the mini grid. An open group has no tile background, the open caret, and the strip behind it and its children. The caret is in the tile and takes no row.
+- **Corner mark.** The state glyph at `size.mark` (8 px) at the top right corner of the tile: its box extends `space.1` / 2 (2 px) past the top edge and past the right edge. A ring of `focus.ring-width` in the fill behind the tile cuts the glyph out of the tile: the rail or the strip. The rules of [Aggregate state](#aggregate-state) apply: an open group shows no mark.
+
+### Label of a project tile
+
+The label has two characters. The rule:
+
+1. The words of the name are separated by `-`, `_`, `.` and spaces.
+2. Remove the leading words that all projects of the same group share, and each word that is the name of a group that holds the project. At least the last word stays.
+3. One word left: its first letter in upper case and its second letter in lower case. Two words or more: the first letter of the first two words, in upper case.
+4. If an earlier project in the same group has the same label, the second character becomes the next letter of the remaining words that gives a free label.
+
+With the sample: acme-web, acme-admin and acme-mobile become "We", "Ad" and "Mo"; globex-api becomes "GA"; dotfiles and docs in one group become "Do" and "Dc". The label has no colour of its own: colour carries only state. The tooltip and the expanded rail show the full name.
+
+### Selection, pointer and keyboard focus
+
+- **Selection.** The tile of the selected project gets `fill.selected` and a label in `text.primary`. A bar marks it at the left edge of the rail: `focus.ring-width` (2 px) wide, `size.icon` (16 px) high, centred on the tile, in `accent`, with the corners at the right rounded by `focus.ring-width`. This is the mark of the active Tab, turned on its side.
+- When the selected project is in a closed group, the group tile gets the selection: the fill and the bar. Thus the bar always shows where the selected project is.
+- **Pointer.** The tile below the pointer gets `fill.hover`. After the tooltip delay of the client, a tooltip shows the full name of a project, or the name of a group and its count of projects, for example "Personal 3 projects", or "empty". The tooltip is `surface.floating`, `radius.floating`, the shadow `shadow.floating`, `font.row.*` in `text.primary`; the count is `font.meta.*` in `text.muted`. It starts `space.1` right of the rail edge and is centred on the tile. The expanded rail shows no tooltip.
+- **Focus.** The tile with the keyboard focus gets a ring of `focus.ring-width` in `focus.ring`, `line.width` outside the tile. Focus and selection are independent.
+- A fill changes in `motion.fast` with `motion.easing`.
+
+### Motion
+
+- A group opens and closes with a change of height: the strip and the tiles below it move in `motion.slow` (200 ms) with `motion.easing`.
+- When the user asks for reduced motion, the change is immediate.
+- The preview page has no script, thus it shows the end states: frames (a) and (b) show Personal closed and open.
+
+### Expanded rail
+
+- The user drags the right edge of the rail to make it wide. Then each tile has its name at its right; the default width is 12 × `space.4` (192 px). A drag below that width closes the rail to its closed width.
+- The tiles, the strips and the inset rule do not change. The strips are as wide as the rail minus their x on each side.
+- The name starts `space.2` right of the tile and ends `space.2` before the right edge of its strip. A project name is `font.row.*`; a group name is `font.row.size` and `font.title.weight`. Both are `text.secondary`; the name of the selected project is `text.primary`.
+- A long name truncates with an ellipsis. The full name is in the tooltip of the name.
+
+### Scroll
+
+- When the tiles are taller than the window, the rail scrolls vertically. The tiles are cut at the bottom edge of the rail: there is no fade and no shadow.
+- The rail has no scroll bar at rest. A thin overlay scroll bar shows while the rail scrolls.
+- When the selected project changes from outside the rail, the rail scrolls the least that makes its tile visible.
+
+### Drag targets (not built)
+
+- A project dropped on a group tile goes into the group, after its last child.
+- A project or a group dropped between two tiles moves there. A drop between two tiles of a strip puts it in that group.
+- The preview page does not show a drag.
+
 ## Do not
 
 - Do not write type words such as "Project", "Worktree" or "Session" in a row. The shape and the position give the type.
-- Do not put a card or a border around a group of rows. Do not use divider lines.
+- Do not put a card or a border around a group of rows of the tree. Do not use divider lines. The strip of an open group in the rail is not a row: it is specified in [Project rail](#project-rail).
 - Do not show a state mark on an open parent.
 - Do not change the weight, the size or the height of a row for a state.
 - Do not use a state colour for text, for an icon or for decoration. Only the glyphs have state colours.
@@ -176,3 +270,13 @@ Measured in Chromium on the preview page, for `nomux-dark` and `nomux-light`, si
 | Sidebar height at rest (a) and below the pointer (b) | 352 and 352 | 296 and 296 |
 | Text truncated at rest | none | none |
 | Text truncated in each frame | only frame (e), the long text | only frame (e), the long text |
+
+The project rail, measured in the same way in each of the seven themes, in the ten frames of the part "Groups":
+
+| | Comfortable | Compact |
+|---|---|---|
+| Tile size in each frame | 28 × 28 | 24 × 24 |
+| Tile centre x in each frame, at each depth, closed and expanded | 26 | 24 |
+| Rail width closed | 52 | 48 |
+| Rail width expanded | 192 | 192 |
+| Strip x and width at depth 1 to 5, closed rail | 2 / 48, 4 / 44, 6 / 40, 8 / 36, 10 / 32 | 2 / 44, 4 / 40, 6 / 36, 8 / 32, 10 / 28 |
