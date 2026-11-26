@@ -26,7 +26,6 @@
 .needs-you-count { display: flex; align-items: center; gap: var(--space-1); color: var(--text-secondary); font-size: var(--font-meta-size); font-weight: var(--font-meta-weight); }
 
 .tree-row {
-  --level: 0;
   display: flex; align-items: center; flex: none;
   height: var(--row-height);
   padding: 0 var(--space-1) 0 calc(var(--padding) - var(--space-1) + var(--space-4) * var(--level));
@@ -34,8 +33,6 @@
   white-space: nowrap; overflow: hidden;
   transition: background-color var(--motion-fast) var(--motion-easing);
 }
-.tree-row.level-1 { --level: 1; }
-.tree-row.level-2 { --level: 2; }
 .tree-row.focus, .tree-row:focus-visible { outline: var(--focus-ring-width) solid var(--focus-ring); outline-offset: calc(var(--focus-ring-width) * -1); }
 
 .slot { width: var(--size-icon); height: var(--size-icon); flex: none; display: grid; place-items: center; margin-right: var(--space-1); color: var(--text-muted); }
@@ -82,3 +79,30 @@
 .density-pair { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4); }
 .window.sidebar-window { display: flex; width: max-content; }
 @media (max-width: 30rem) { .theme { padding: var(--space-4); } }
+
+/* The section "Groups (alternatives)": the rows of groups and projects, the
+   column of alternative 2 and the group tiles of alternative 3. */
+.tree-row.group .primary { font-size: var(--font-row-size); font-weight: var(--font-title-weight); color: var(--text-secondary); }
+.tree-row.project .primary { font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
+.navigator { background: var(--surface-sunken); padding: var(--space-1); display: flex; flex-direction: column; width: calc(var(--space-4) * 14); flex: none; }
+.rail.named { width: calc(var(--space-4) * 12); }
+.rail-item { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.rail-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-secondary); }
+.rail-item.selected .rail-name { color: var(--text-primary); }
+.rail-children { display: flex; flex-direction: column; gap: var(--space-2); padding-bottom: var(--space-2); }
+.tile .caret { color: var(--text-secondary); }
+.minis { display: grid; grid-template-columns: repeat(2, calc((var(--size-icon) - var(--space-1)) / 2)); grid-auto-rows: calc((var(--size-icon) - var(--space-1)) / 2); gap: var(--space-1); }
+.minis > span { border-radius: calc(var(--radius-button) / 4); background-color: var(--text-muted); }
+.tooltip {
+  position: absolute; left: calc(100% + var(--space-2)); top: 50%; transform: translateY(-50%); z-index: 1;
+  display: flex; align-items: center; height: var(--control-height); padding: 0 var(--space-2);
+  border-radius: var(--radius-button); background: var(--surface-floating); color: var(--text-primary);
+  box-shadow: 0 var(--space-1) var(--space-3) var(--shadow-floating);
+  font-size: var(--font-row-size); font-weight: var(--font-row-weight); white-space: nowrap;
+}
+.alternative { display: flex; flex-direction: column; gap: var(--space-3); }
+.theme h4 { margin: 0; font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
+.group-frames { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-4) calc(var(--space-4) * 2); }
+.group-frames > p { flex-basis: 100%; }
+.group-frames > figure { width: min-content; }
+.rail-item.selected, .rail-item.hover { background-image: none; }

@@ -9,6 +9,10 @@ use super::sample::{Kind, Project, Session};
 /// The face of the name of a row.
 #[derive(Clone, Copy)]
 pub enum Face {
+    /// 12 px, title weight, secondary.
+    Group,
+    /// 13 px, title weight.
+    Project,
     /// 13 px, title weight.
     Worktree,
     /// 12 px, title weight.
@@ -22,6 +26,8 @@ pub enum Face {
 impl Face {
     const fn class(self) -> &'static str {
         match self {
+            Self::Group => "group",
+            Self::Project => "project",
             Self::Worktree => "worktree",
             Self::Agent => "agent",
             Self::Shell => "shell",
@@ -76,7 +82,8 @@ fn swap(rest: &str, hover: &str) -> String {
 
 /// One row of the tree.
 pub struct Row {
-    /// 0 for a worktree, 1 for a session, 2 for a child.
+    /// 0 for a worktree, 1 for a session, 2 for a child. A tree of groups
+    /// adds the depth of the project.
     pub level: u8,
     pub two_line: bool,
     pub slot: Slot,
@@ -126,7 +133,7 @@ impl Row {
     }
 
     pub fn render(&self) -> String {
-        let mut classes = format!("tree-row level-{} {}", self.level, self.face.class());
+        let mut classes = format!("tree-row {}", self.face.class());
         for (on, class) in [
             (self.two_line, "two-line"),
             (self.selected, "selected"),
@@ -153,9 +160,10 @@ impl Row {
             )
         };
         format!(
-            "<div class=\"{classes}\">{slot}<span class=\"text\"><span class=\"primary\">{name}</span>{secondary}</span>{tail}</div>\n",
+            "<div class=\"{classes}\" style=\"--level: {level}\">{slot}<span class=\"text\"><span class=\"primary\">{name}</span>{secondary}</span>{tail}</div>\n",
             slot = self.slot.render(),
-            name = self.name
+            name = self.name,
+            level = self.level,
         )
     }
 }
