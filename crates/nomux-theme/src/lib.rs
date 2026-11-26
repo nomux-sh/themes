@@ -4,13 +4,10 @@
 //! is a TOML file that gives values to tokens. A token that a theme does not
 //! set comes from the base theme that it `extends`.
 //!
-//! ```no_run
-//! use std::path::Path;
+//! ```
+//! use nomux_theme::{ColorToken, TextStyle, contrast_ratio, rules, shipped};
 //!
-//! use nomux_theme::{ColorToken, TextStyle, ThemeSet, contrast_ratio, rules};
-//!
-//! let themes = ThemeSet::load_dir(Path::new("themes"))?;
-//! let theme = themes.resolve("nomux-dark")?;
+//! let theme = shipped::theme("nomux-dark").ok_or("no theme nomux-dark")?;
 //!
 //! let text = theme.color(ColorToken::TextMuted);
 //! let surface = theme.color(ColorToken::SurfaceBase);
@@ -25,6 +22,7 @@
 //!
 //! - [`token`]: the token set.
 //! - [`parse`], [`validate`], [`ThemeSet`]: a theme file to a resolved [`Theme`].
+//! - [`shipped`]: the themes that the repository ships, embedded in the crate.
 //! - [`Theme`]: typed access to the values.
 //! - [`Rgba`], [`contrast_ratio`]: the colour maths of WCAG 2.x.
 //! - [`rules`]: the visual rules that each theme must obey.
@@ -41,6 +39,8 @@ pub mod parse;
 mod problem;
 mod resolve;
 pub mod rules;
+#[cfg(feature = "shipped")]
+pub mod shipped;
 mod theme;
 pub mod token;
 pub mod validate;

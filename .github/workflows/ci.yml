@@ -68,6 +68,16 @@ jobs:
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       - name: cargo package
         run: cargo package -p nomux-theme --locked
+      # The verify step of `cargo package` builds the package, but does not
+      # run its tests. This step loads each embedded theme from the package.
+      - name: Test the shipped themes of the package
+        run: |
+          set -euo pipefail
+          version="$(cargo metadata --no-deps --format-version 1 |
+            jq -r '.packages[] | select(.name == "nomux-theme") | .version')"
+          tar -xzf "target/package/nomux-theme-$version.crate" -C "$RUNNER_TEMP"
+          cargo test --locked --manifest-path "$RUNNER_TEMP/nomux-theme-$version/Cargo.toml" \
+            --test shipped_themes
       - name: Build with the minimum supported Rust version
         run: |
           set -euo pipefail

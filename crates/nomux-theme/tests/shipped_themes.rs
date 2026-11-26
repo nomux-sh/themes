@@ -1,25 +1,57 @@
-//! The themes of the `themes/` directory, and the rules with a theme that
-//! breaks them.
+//! The themes that the crate ships, and the rules with a theme that breaks
+//! them.
+#![cfg(feature = "shipped")]
 
+use std::fs;
 use std::path::Path;
 
 use nomux_theme::rules::{self, Violation};
-use nomux_theme::{ColorToken, DurationToken, LengthToken, ThemeSet};
+use nomux_theme::{Appearance, ColorToken, DurationToken, LengthToken, Theme, ThemeSet, shipped};
 
-fn shipped() -> ThemeSet {
-    ThemeSet::load_dir(&Path::new(env!("CARGO_MANIFEST_DIR")).join("themes")).unwrap()
+fn shipped_set() -> ThemeSet {
+    let mut set = ThemeSet::new();
+    for (id, text) in shipped::FILES {
+        set.insert(id, text).unwrap();
+    }
+    set
+}
+
+#[test]
+fn the_embedded_files_are_the_files_of_the_themes_directory() {
+    let directory = Path::new(env!("CARGO_MANIFEST_DIR")).join("themes");
+    let mut on_disk: Vec<String> = fs::read_dir(directory)
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .filter(|path| {
+            path.extension()
+                .is_some_and(|extension| extension == "toml")
+        })
+        .map(|path| path.file_stem().unwrap().to_string_lossy().into_owned())
+        .collect();
+    on_disk.sort();
+    let embedded: Vec<&str> = shipped::FILES.iter().map(|(id, _)| *id).collect();
+    assert_eq!(on_disk, embedded);
 }
 
 #[test]
 fn each_shipped_theme_resolves_and_obeys_the_rules() {
-    let themes = shipped().resolve_all().unwrap();
-    for id in ["base-dark", "base-light", "nomux-dark", "nomux-light"] {
-        assert!(
-            themes.iter().any(|theme| theme.id() == id),
-            "{id} is missing"
+    let ids: Vec<&str> = shipped::themes().iter().map(Theme::id).collect();
+    let embedded: Vec<&str> = shipped::FILES.iter().map(|(id, _)| *id).collect();
+    assert_eq!(ids, embedded);
+    for (id, appearance) in [
+        ("base-dark", Appearance::Dark),
+        ("base-light", Appearance::Light),
+        ("nomux-dark", Appearance::Dark),
+        ("nomux-light", Appearance::Light),
+    ] {
+        assert_eq!(
+            shipped::theme(id).map(Theme::appearance),
+            Some(appearance),
+            "{id}"
         );
     }
-    for theme in &themes {
+    assert!(shipped::theme("missing").is_none());
+    for theme in shipped::themes() {
         let violations: Vec<String> = rules::violations(theme)
             .iter()
             .map(ToString::to_string)
@@ -35,7 +67,7 @@ fn each_shipped_theme_resolves_and_obeys_the_rules() {
 
 #[test]
 fn a_theme_that_breaks_the_rules_gets_one_violation_for_each_rule() {
-    let mut themes = shipped();
+    let mut themes = shipped_set();
     themes
         .insert(
             "broken",
