@@ -1,5 +1,5 @@
 //! The one set of sample data of the sidebar mock-ups, and the frames that
-//! show it in one state each. All directions render the same data.
+//! show it in one state each.
 
 use super::super::glyph::State;
 
@@ -7,7 +7,7 @@ use super::super::glyph::State;
 pub enum Kind {
     Agent,
     Shell,
-    /// A Team: the children are the members, the lead first.
+    /// A Team: the children are the members, the leader first.
     Team,
 }
 
@@ -18,11 +18,12 @@ pub struct Session {
     pub state: State,
     pub doing: &'static str,
     pub age: &'static str,
-    pub lead: bool,
+    pub leader: bool,
     pub children: Vec<Session>,
     pub open: bool,
     pub selected: bool,
     pub hover: bool,
+    pub focus: bool,
 }
 
 impl Session {
@@ -39,18 +40,19 @@ impl Session {
             state,
             doing,
             age,
-            lead: false,
+            leader: false,
             children: Vec::new(),
             open: false,
             selected: false,
             hover: false,
+            focus: false,
         }
     }
 
-    /// What the session does. The lead of a Team says that it leads.
+    /// What the session does. The leader of a Team says that it leads.
     pub fn described(&self) -> String {
-        if self.lead {
-            format!("lead · {}", self.doing)
+        if self.leader {
+            format!("leader · {}", self.doing)
         } else {
             self.doing.to_owned()
         }
@@ -142,7 +144,7 @@ impl Project {
     }
 }
 
-/// The sample of the study: one project, four worktrees.
+/// The sample: one project, four worktrees.
 fn sample() -> Project {
     let mut claude = Session::new(
         "Claude",
@@ -213,7 +215,7 @@ fn sample() -> Project {
     }
 }
 
-/// One state of the sidebar that a reviewer needs to judge a direction.
+/// One state of the sidebar that the page shows.
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Frame {
     Rest,
@@ -221,32 +223,43 @@ pub enum Frame {
     OpenAndClosed,
     Team,
     LongText,
+    WithoutProcess,
+    Empty,
 }
 
 impl Frame {
-    pub const ALL: [Self; 5] = [
+    pub const ALL: [Self; 7] = [
         Self::Rest,
         Self::Hover,
         Self::OpenAndClosed,
         Self::Team,
         Self::LongText,
+        Self::WithoutProcess,
+        Self::Empty,
     ];
 
     pub const fn caption(self) -> &'static str {
         match self {
-            Self::Rest => "(a) Rest: the sample data, the Claude row selected",
+            Self::Rest => {
+                "(a) Rest: the sample data with the project rail. The Claude row is selected and needs you"
+            }
             Self::Hover => {
-                "(b) Pointer over the dev row: the items for the pointer appear, the row keeps its height"
+                "(b) Pointer over the dev row: the actions replace the age, the row keeps its height"
             }
             Self::OpenAndClosed => {
-                "(c) fix-login open with the child of Claude open, billing-export closed with its aggregate state"
+                "(c) fix-login open with the child of Claude open; the other worktrees closed with their aggregate state"
             }
             Self::Team => {
-                "(d) A Team: lead Claude with the members Codex, Gemini CLI and Qwen Code"
+                "(d) A Team: leader Claude with the members Codex, Gemini CLI and Qwen Code"
             }
             Self::LongText => {
                 "(e) A long worktree name and a long reason: both truncate, the row keeps its height"
             }
+            Self::WithoutProcess => {
+                "(f) After a restart: dev is dormant and has the keyboard focus, Gemini CLI is hibernated, \
+                 the result of Codex is seen, thus Codex is idle"
+            }
+            Self::Empty => "(g) A project without worktrees",
         }
     }
 
@@ -263,13 +276,13 @@ impl Frame {
                 project.close_all_but("fix-login");
                 let member =
                     |name, state, doing| Session::new(name, Kind::Agent, state, doing, "3m");
-                let mut lead = member("Claude", State::NeedsYou, "asks for approval");
-                lead.lead = true;
+                let mut leader = member("Claude", State::NeedsYou, "wants approval");
+                leader.leader = true;
                 let mut team = Session::new("Team", Kind::Team, State::NeedsYou, "4 members", "3m");
                 team.open = true;
                 team.selected = true;
                 team.children = vec![
-                    lead,
+                    leader,
                     member("Codex", State::Working, "writes tests"),
                     member("Gemini CLI", State::Done, "review done"),
                     member("Qwen Code", State::Idle, "in its own Tab"),
@@ -284,6 +297,26 @@ impl Frame {
                 worktree.sessions[0].doing =
                     "wants to run npm run test:integration -- --runInBand --coverage";
             }
+            Self::WithoutProcess => {
+                project.worktree("upgrade-deps").open = false;
+                let dev = project.session("fix-login", "dev");
+                dev.state = State::NoProcess;
+                dev.doing = "dormant · restores on open";
+                dev.focus = true;
+                let codex = project.session("billing-export", "Codex");
+                codex.state = State::Idle;
+                project
+                    .worktree("billing-export")
+                    .sessions
+                    .push(Session::new(
+                        "Gemini CLI",
+                        Kind::Agent,
+                        State::NoProcess,
+                        "hibernated",
+                        "3h",
+                    ));
+            }
+            Self::Empty => project.worktrees.clear(),
         }
         project
     }
