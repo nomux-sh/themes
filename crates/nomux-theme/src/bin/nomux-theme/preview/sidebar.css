@@ -1,0 +1,77 @@
+
+/* Sidebar: the three directions and the sidebar of the workspace. The
+   specification is docs/sidebar.md. */
+.glyph { width: var(--size-mark); height: var(--size-mark); flex: none; display: block; overflow: visible; }
+.glyph .filled, .icon-svg .filled { fill: currentColor; stroke: none; }
+.glyph.working { color: var(--state-working); }
+.glyph.needs-you { color: var(--state-needs-you); }
+.glyph.done { color: var(--state-done); }
+.glyph.error { color: var(--state-error); }
+.glyph.idle { color: var(--state-idle); }
+.icon-svg { width: var(--size-mark); height: var(--size-mark); flex: none; display: block; overflow: visible; }
+.icon-svg.branch { display: inline-block; width: var(--font-meta-size); height: var(--font-meta-size); margin-right: var(--space-1); vertical-align: text-bottom; }
+
+.tile .glyph { position: absolute; top: calc(var(--space-1) / -2); right: calc(var(--space-1) / -2); border-radius: 50%; background: var(--surface-sunken); outline: var(--focus-ring-width) solid var(--surface-sunken); }
+
+.sidebar { background: var(--surface-base); padding: var(--space-1); display: flex; flex-direction: column; min-width: 0; }
+.sidebar-header {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-2);
+  height: var(--row-height); padding: 0 calc(var(--padding) - var(--space-1)); margin-bottom: var(--space-2);
+  font-size: var(--font-title-size); font-weight: var(--font-title-weight); white-space: nowrap;
+}
+.needs-you-count { display: flex; align-items: center; gap: var(--space-1); color: var(--text-secondary); font-size: var(--font-meta-size); font-weight: var(--font-meta-weight); }
+
+.tree-row {
+  --level: 0;
+  display: flex; align-items: center; flex: none;
+  height: var(--row-height);
+  padding: 0 calc(var(--padding) - var(--space-1)) 0 calc(var(--padding) - var(--space-1) + var(--space-4) * var(--level));
+  border-radius: var(--radius-button);
+  white-space: nowrap; overflow: hidden;
+  transition: background-color var(--motion-fast) var(--motion-easing);
+}
+.orca-order .tree-row, .orca-order .sidebar-header, .quiet-two-level .tree-row, .quiet-two-level .sidebar-header { padding-right: var(--space-1); }
+.tree-row.level-1 { --level: 1; }
+.tree-row.level-2 { --level: 2; }
+.tree-row.two-line { height: var(--two-line-row-height); }
+
+.slot { width: var(--size-icon); height: var(--size-icon); flex: none; display: grid; place-items: center; color: var(--text-muted); }
+.slot > span { place-items: center; }
+.orca-order .slot.left, .quiet-two-level .slot.left { margin-right: var(--space-1); }
+.slot.right { margin-left: var(--space-2); }
+
+.tree-row .text { display: flex; align-items: baseline; gap: var(--space-2); flex: 1; min-width: 0; }
+.tree-row .primary, .tree-row .secondary { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.tree-row .primary { flex: 0 1 auto; }
+.tree-row .secondary { flex: 1 1 0; color: var(--text-muted); font-size: var(--font-meta-size); font-weight: var(--font-meta-weight); }
+/* A row of two lines is a grid, thus the slot centres on the first line. */
+.tree-row.two-line { display: grid; grid-template-columns: auto minmax(0, 1fr); align-content: center; align-items: center; }
+.tree-row.two-line .text { display: contents; }
+.tree-row.two-line .secondary { grid-column: 2; }
+.compact .orca-order .tree-row.two-line { display: flex; height: var(--row-height); }
+.compact .orca-order .tree-row.two-line .text { display: flex; }
+
+.tree-row.worktree .primary { font-size: var(--font-title-size); font-weight: var(--font-title-weight); }
+.tree-row.agent .primary { font-size: var(--font-row-size); font-weight: var(--font-title-weight); }
+.tree-row.shell .primary { font-family: var(--font-mono); font-size: var(--font-row-size); font-weight: var(--font-code-weight); }
+.tree-row.child .primary { font-size: var(--font-row-size); font-weight: var(--font-row-weight); color: var(--text-muted); }
+.tree-row.attention .secondary, .tree-row.child.attention .primary { color: var(--text-primary); }
+
+.tree-row .tail { flex: none; display: flex; align-items: center; margin-left: var(--space-2); color: var(--text-muted); font-size: var(--font-meta-size); font-weight: var(--font-meta-weight); font-variant-numeric: tabular-nums; }
+.tree-row .count, .tree-row .actions { display: flex; align-items: center; }
+.tree-row .tail > span { align-items: center; gap: var(--space-1); }
+.tree-row .count { gap: calc(var(--space-1) / 2); }
+.tree-row .actions { gap: var(--space-2); color: var(--text-secondary); }
+
+.tree-row .at-rest { display: flex; }
+.tree-row .on-hover { display: none; }
+.tree-row:hover .on-hover, .tree-row.hover .on-hover { display: flex; }
+.tree-row:hover .at-rest, .tree-row.hover .at-rest { display: none; }
+
+/* The section "Sidebar directions" */
+.direction-grid { display: flex; flex-wrap: wrap; align-items: flex-start; gap: calc(var(--space-4) * 2); }
+.direction { display: flex; flex-direction: column; gap: var(--space-4); width: min-content; }
+.direction > header { display: flex; flex-direction: column; gap: var(--space-1); }
+.window.sidebar-window { grid-template-columns: auto 17rem; }
+.window.sidebar-frame { grid-template-columns: 17rem; width: max-content; }
+@media (max-width: 30rem) { .theme { padding: var(--space-4); } }

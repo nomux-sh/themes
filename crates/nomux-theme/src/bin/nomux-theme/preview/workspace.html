@@ -1,42 +1,19 @@
 <div class="window">
-  <div class="rail">
-    <div class="tile selected">A<span class="mark needs-you"></span></div>
-    <div class="tile">B<span class="mark working"></span></div>
-    <div class="tile">D<span class="mark error"></span></div>
-    <div class="tile">N</div>
-  </div>
-  <div class="sidebar">
-    <div class="title-row"><span>acme-web</span><span class="meta">1 needs you</span></div>
-    <div class="row"><span class="icon">▾</span><span class="name">acme-web</span><span class="meta">· Project</span><span class="mark needs-you"></span></div>
-    <div class="card">
-      <div class="row level-1"><span class="icon">▾</span><span class="name">fix-login</span><span class="meta">· Worktree · 3 changes</span><span class="mark needs-you"></span></div>
-      <div class="row level-2 selected"><span class="icon tool">C</span><span class="name">Claude</span><span class="meta">· wants to run npm test</span><span class="mark needs-you"></span></div>
-      <div class="row level-3 child"><span class="name">Explore</span><span class="meta">· reads session.rs</span><span class="mark working"></span></div>
-      <div class="row level-2"><span class="icon tool">$</span><span class="name">dev</span><span class="meta">· port 3000</span><span class="mark working"></span></div>
-      <p class="meta detail">12 of 40 tests · no output for 2 min</p>
-    </div>
-    <div class="row level-1"><span class="icon">▾</span><span class="name">billing-export</span><span class="meta">· Worktree</span><span class="mark done"></span></div>
-    <div class="row level-2 hover"><span class="icon tool">X</span><span class="name">Codex</span><span class="meta">· wrote 4 files</span><span class="mark done"></span></div>
-    <div class="row level-1"><span class="icon">▾</span><span class="name">upgrade-deps</span><span class="meta">· Worktree</span><span class="mark error"></span></div>
-    <div class="row level-2"><span class="icon tool">Q</span><span class="name">Qwen Code</span><span class="meta">· build failed</span><span class="mark error"></span></div>
-    <div class="row level-1"><span class="icon">▸</span><span class="name">main</span><span class="meta">· Worktree</span><span class="mark idle"></span></div>
-    <div class="row level-2"><span class="icon tool">$</span><span class="name">zsh</span><span class="meta">· idle</span><span class="mark idle"></span></div>
-  </div>
-  <div class="pane">
+{rail}{sidebar}  <div class="pane">
     <div class="tabbar">
-      <div class="tab active"><span class="mark needs-you"></span>Team · fix-login</div>
-      <div class="tab"><span class="mark working"></span>Codex</div>
-      <div class="tab hover"><span class="mark done"></span>Qwen Code</div>
+      <div class="tab active">{glyph-needs-you}Team · fix-login</div>
+      <div class="tab">{glyph-working}Codex</div>
+      <div class="tab hover">{glyph-done}Qwen Code</div>
       <span class="spacer"></span>
       <div class="chip">zsh</div>
       <div class="chip">dev</div>
       <div class="chip">logs</div>
     </div>
     <div class="roster">
-      <div class="member selected"><span class="icon tool">C</span><span>Claude</span><span class="meta">· leader · asks for approval</span><span class="mark needs-you"></span></div>
-      <div class="member"><span class="icon tool">X</span><span>Codex</span><span class="meta">· writes tests</span><span class="mark working"></span></div>
-      <div class="member"><span class="icon tool">G</span><span>Gemini CLI</span><span class="meta">· review done</span><span class="mark done"></span></div>
-      <div class="member"><span class="icon tool">Q</span><span>Qwen Code ↗</span><span class="meta">· in its own Tab</span><span class="mark idle"></span></div>
+      <div class="member selected"><span class="icon tool">C</span><span>Claude</span><span class="meta">· leader · asks for approval</span>{glyph-needs-you}</div>
+      <div class="member"><span class="icon tool">X</span><span>Codex</span><span class="meta">· writes tests</span>{glyph-working}</div>
+      <div class="member"><span class="icon tool">G</span><span>Gemini CLI</span><span class="meta">· review done</span>{glyph-done}</div>
+      <div class="member"><span class="icon tool">Q</span><span>Qwen Code ↗</span><span class="meta">· in its own Tab</span>{glyph-idle}</div>
     </div>
 <pre class="terminal"><span class="a2">~/acme-web</span> <span class="a4">fix-login</span> <span class="a8">$</span> npm test
 <span class="a8">running 40 tests</span>
