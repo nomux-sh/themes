@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [git-cliff](https://git-cliff.org) writes this file from the commit subjects.
 To see the changes that are not in a version, run `git cliff --unreleased`.
 
+## [0.3.1] - 2026-11-26
+
+### Added
+
+- Embed the shipped themes in the crate behind a default feature
+
+### Changed
+
+- Move the theme files into the crate directory
 ## [0.3.0] - 2026-11-26
 
 ### Breaking changes
