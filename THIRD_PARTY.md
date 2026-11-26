@@ -40,12 +40,12 @@ SOFTWARE.
 
 ## Gruvbox
 
-The repository <https://github.com/morhetz/gruvbox> has no license file. Its `README.md` gives the license as "MIT/X11", and its `package.json` has `"license": "MIT"` and `"author": "Pavel Pertsev <morhetz@gmail.com>"`. The text of the MIT License with this author:
+The repository <https://github.com/morhetz/gruvbox> has no license file. Its `README.md` gives the license as "MIT/X11", and its `package.json` has `"license": "MIT"` and `"author": "Pavel Pertsev"`. The text of the MIT License with this author:
 
 ```text
 MIT License
 
-Copyright (c) Pavel Pertsev <morhetz@gmail.com>
+Copyright (c) Pavel Pertsev
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
