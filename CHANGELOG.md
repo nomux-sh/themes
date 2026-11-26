@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [git-cliff](https://git-cliff.org) writes this file from the commit subjects.
 To see the changes that are not in a version, run `git cliff --unreleased`.
 
+## [0.3.0] - 2026-11-26
+
+### Breaking changes
+
+- Add fill.level and size.corner-mark with a level contrast rule
+
+### Added
+
+- Show three alternatives of group rows on the preview page
+- Open groups in place in the project rail
+
+### Fixed
+
+- Show group initials, larger marks and stable labels in the rail
 ## [0.2.0] - 2026-11-26
 
 ### Added

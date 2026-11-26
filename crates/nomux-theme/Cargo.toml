@@ -1,6 +1,6 @@
 [package]
 name = "nomux-theme"
-version = "0.2.0"
+version = "0.3.0"
 description = "The nomux theme loader: the semantic design tokens, theme files, the contrast rules and the iTerm import"
 edition.workspace = true
 rust-version = "1.85"
