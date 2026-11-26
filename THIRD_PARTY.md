@@ -6,9 +6,9 @@ A theme file has only colour values of the palette. No code of the source projec
 
 | Theme file | Palette | Source | License |
 |---|---|---|---|
-| `themes/catppuccin-mocha.toml` | Catppuccin Mocha | <https://github.com/catppuccin/catppuccin>, values from `palette.json` of <https://github.com/catppuccin/palette> | MIT |
-| `themes/gruvbox-dark.toml` | Gruvbox Dark | <https://github.com/morhetz/gruvbox>, values from `colors/gruvbox.vim` | MIT/X11 |
-| `themes/tokyo-night.toml` | Tokyo Night | <https://github.com/tokyo-night/tokyo-night-vscode-theme>, values from `themes/tokyo-night-color-theme.json` | MIT |
+| `crates/nomux-theme/themes/catppuccin-mocha.toml` | Catppuccin Mocha | <https://github.com/catppuccin/catppuccin>, values from `palette.json` of <https://github.com/catppuccin/palette> | MIT |
+| `crates/nomux-theme/themes/gruvbox-dark.toml` | Gruvbox Dark | <https://github.com/morhetz/gruvbox>, values from `colors/gruvbox.vim` | MIT/X11 |
+| `crates/nomux-theme/themes/tokyo-night.toml` | Tokyo Night | <https://github.com/tokyo-night/tokyo-night-vscode-theme>, values from `themes/tokyo-night-color-theme.json` | MIT |
 
 ## Catppuccin
 

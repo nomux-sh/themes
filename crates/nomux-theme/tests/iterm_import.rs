@@ -45,7 +45,7 @@ fn the_theme_file_of_an_import_is_a_theme_that_loads() {
 
     let mut themes = ThemeSet::new();
     themes
-        .insert("base-dark", include_str!("../../../themes/base-dark.toml"))
+        .insert("base-dark", include_str!("../themes/base-dark.toml"))
         .unwrap();
     themes.insert("imported", &file).unwrap();
     let theme = themes.resolve("imported").unwrap();

@@ -7,7 +7,7 @@ use nomux_theme::rules::{self, Violation};
 use nomux_theme::{ColorToken, DurationToken, LengthToken, ThemeSet};
 
 fn shipped() -> ThemeSet {
-    ThemeSet::load_dir(&Path::new(env!("CARGO_MANIFEST_DIR")).join("../../themes")).unwrap()
+    ThemeSet::load_dir(&Path::new(env!("CARGO_MANIFEST_DIR")).join("themes")).unwrap()
 }
 
 #[test]

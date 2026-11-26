@@ -11,7 +11,7 @@ In development. Versions earlier than 1.0.0 are pre-releases: interfaces can cha
 The repository has these parts now:
 
 - The token set: 83 semantic design tokens for the full nomux UI. [docs/tokens.md](docs/tokens.md) gives each token, its role and where the UI can use it.
-- The theme files in [themes/](themes), and the JSON Schema of a theme file in [schema/theme.schema.json](schema/theme.schema.json).
+- The theme files in [crates/nomux-theme/themes/](crates/nomux-theme/themes), and the JSON Schema of a theme file in [schema/theme.schema.json](schema/theme.schema.json).
 - The crate [`nomux-theme`](crates/nomux-theme): it loads a theme file, resolves `extends`, validates the tokens, gives typed access to the values and examines the visual rules. It also imports an iTerm colour scheme.
 - The preview page: <https://nomux-sh.github.io/themes/>. It shows each theme with mock-ups of the nomux UI, each token and each contrast ratio. Each push to `main` publishes it.
 
@@ -76,20 +76,20 @@ An editor that knows JSON Schema can complete the token names. With the [Taplo](
 ## Add a theme
 
 1. Make sure that the license of the palette permits redistribution. Read the license in the source repository.
-2. Copy `themes/nomux-dark.toml` or `themes/nomux-light.toml` to `themes/<identifier>.toml`. The identifier has only lowercase letters, digits and hyphens.
+2. Copy `crates/nomux-theme/themes/nomux-dark.toml` or `crates/nomux-theme/themes/nomux-light.toml` to `crates/nomux-theme/themes/<identifier>.toml`. The identifier has only lowercase letters, digits and hyphens.
 3. Set `name`, `appearance` and `extends` (`base-dark` or `base-light`).
 4. Set the colour tokens of the palette. [docs/tokens.md](docs/tokens.md) gives the role of each token. Leave the typography, spacing and motion tokens to the base theme.
 5. Run the check, and correct each line that it prints:
 
    ```sh
-   cargo run -p nomux-theme -- check themes
+   cargo run -p nomux-theme -- check crates/nomux-theme/themes
    ```
 
    The check examines the token names, the value syntax and the visual rules. The most important rules: each text level has a contrast of 4.5:1 or more on each surface, each state colour has 3:1 or more, `fill.hover`, `fill.selected` and `fill.level` are `text.primary` with an alpha from 4% to 8%, and each level of `fill.level` in the project rail has 1.1:1 or more to the level below it. If a colour of the palette does not pass on a surface, select a different tone of the palette for the surface or for the colour. Do not change a rule.
 6. Write the preview page and look at the theme:
 
    ```sh
-   cargo run -p nomux-theme -- preview themes site/index.html
+   cargo run -p nomux-theme -- preview crates/nomux-theme/themes site/index.html
    ```
 
 7. If the palette is not your own work, add its source, its license and its copyright notice to `THIRD_PARTY.md` and `NOTICE`.
@@ -98,7 +98,7 @@ An editor that knows JSON Schema can complete the token names. With the [Taplo](
 To start from an iTerm colour scheme, import it. The command prints a theme file that sets the terminal tokens:
 
 ```sh
-cargo run -p nomux-theme -- import-iterm scheme.itermcolors "My Theme" > themes/my-theme.toml
+cargo run -p nomux-theme -- import-iterm scheme.itermcolors "My Theme" > crates/nomux-theme/themes/my-theme.toml
 ```
 
 ## Token set
@@ -136,7 +136,7 @@ The library API is in the [README of the crate](crates/nomux-theme/README.md).
 | Path | Content |
 |---|---|
 | `crates/nomux-theme/` | The crate: the library and the `nomux-theme` command. |
-| `themes/` | The theme files. |
+| `crates/nomux-theme/themes/` | The theme files. |
 | `schema/theme.schema.json` | JSON Schema of a theme file. Generated. |
 | `docs/tokens.md` | The token reference. Generated. |
 | `scripts/` | Scripts for the generated files and for the release notes. |
@@ -164,7 +164,7 @@ cargo nextest run --workspace
 cargo test --workspace --doc
 cargo deny check
 cargo machete
-cargo run --locked -p nomux-theme -- check themes
+cargo run --locked -p nomux-theme -- check crates/nomux-theme/themes
 scripts/check-generated.sh
 cargo package -p nomux-theme --locked
 actionlint
