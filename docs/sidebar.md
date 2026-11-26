@@ -116,7 +116,7 @@ The sequence of the table is the priority: needs you is the most urgent, no proc
 - A closed worktree shows the glyph of the most urgent state of its Sessions in its slot.
 - A closed agent with children, or a closed Team, shows the glyph of its most urgent child and "+N" in its tail. Its own state stays in its slot.
 - An open parent shows no aggregate. An open worktree has an empty slot. An open Team has an empty slot: its members show their states.
-- The project tile in the rail shows the most urgent state of the project. A closed group tile shows the most urgent state of each project in the group and in its groups.
+- The project tile in the rail shows the most urgent state of the project. A closed group tile shows the most urgent state of each project in the group and in its groups. An open group tile shows the open mark and no state.
 
 ## Sort
 
@@ -180,11 +180,14 @@ The x positions are measured from the left edge of the rail. `T` is the tile siz
 | Strip: space above its first tile and below its last tile | `space.1` | 4 px | 4 px |
 | Strip corner radius | `radius.raised` | 8 px | 8 px |
 | Tile corner radius | `radius.button` | 6 px | 6 px |
-| Label of a project tile | `font.title.size`, `font.title.weight` | 13 px | 13 px |
+| Label of a project tile, initial of an open group | `font.title.size`, `font.title.weight` | 13 px | 13 px |
+| Corner mark: state mark and open mark | `size.corner-mark` | 10 px | 10 px |
+| Ring that cuts a corner mark out of the tile | `focus.ring-width` | 2 px | 2 px |
 
 - **Inset rule.** Each level of strips is `space.1` / 2 narrower on each side than its parent strip. The tiles do not move: each tile has the same x and the same size at each depth, thus all tiles have one centre line. From depth 6, a strip has the width of depth 5.
 - A strip takes the `space.1` above its first tile and below its last tile from the gap between two tiles. Thus a group tile does not move when the group opens, and between a strip and the next tile 4 px stay.
-- **Fill.** A strip of depth `D` is `D` layers of `fill.hover` over `surface.sunken`. Thus each level is one step lighter in a dark theme and one step darker in a light theme. The strip has no border and no shadow.
+- **Fill.** A strip of depth `D` is `D` layers of `fill.level` over `surface.sunken`. Thus each level is one step lighter in a dark theme and one step darker in a light theme. From depth 6, a strip has the fill of depth 5. The strip has no border and no shadow: the levels differ by the fill only.
+- **Level contrast.** The theme check makes sure that each level of the fill, to depth 5, has a contrast of 1.1:1 or more to the level below it, and that `text.primary` and `text.secondary` have 4.5:1 or more on each level. Thus the names of the expanded rail stay readable at depth 5.
 - The rail is `surface.sunken`.
 
 ### Tiles
@@ -194,22 +197,25 @@ The x positions are measured from the left edge of the rail. `T` is the tile siz
 | Project | the label, `text.secondary` | `surface.button` | the most urgent state of the project |
 | Closed group | the **mini grid**: one square for each of the first four children, filled for a project, hollow for a group | `surface.button` | the aggregate state |
 | Empty closed group | no face | `surface.button` | none |
-| Open group | the open caret, `size.icon`, `text.muted` | none: the strip shows behind it | none |
+| Open group | the **initial** of the group name, `text.secondary` | `surface.button` | the open mark, at the bottom right |
 
 - **Mini grid.** 2 × 2 squares of (`size.icon` − `space.1`) / 2 (6 px), with a gap of `space.1`: 16 px in all. A filled square is `text.muted` with the radius `radius.button` / 4. A hollow square has a line of `line.width` in `text.muted`. The squares fill from the top left, by rows. The grid shows what the group holds and how much (one to four), and its shape is different from a label, thus a group tile never looks like a project tile.
-- **Open and closed.** A closed group is a tile with a background and the mini grid. An open group has no tile background, the open caret, and the strip behind it and its children. The caret is in the tile and takes no row.
-- **Corner mark.** The state glyph at `size.mark` (8 px) at the top right corner of the tile: its box extends `space.1` / 2 (2 px) past the top edge and past the right edge. A ring of `focus.ring-width` in the fill behind the tile cuts the glyph out of the tile: the rail or the strip. The rules of [Aggregate state](#aggregate-state) apply: an open group shows no mark.
+- **Initial.** The first character of the group name, in upper case, with the font of a project label. It has one character and a project label has two, thus an open group never looks like a project tile. The initial tells which group is open without the pointer. Two groups can have the same initial, for example Web and Work. Then the depth of the strip, the projects in it and the tooltip tell them apart. The initial does not change to a second letter, because it must stay the first letter of the name that the user reads in the expanded rail.
+- **Open and closed.** A closed group is a tile with the mini grid. An open group is a tile with its initial and the open mark, and the strip behind it and its children. The open mark is in the tile and takes no row.
+- **Corner mark.** A mark of `size.corner-mark` (10 px) at a corner of the tile: its box extends `space.1` / 2 (2 px) past the edge of the tile on each side of the corner. A ring of `focus.ring-width` (2 px) in `surface.sunken` cuts the mark out of the tile, at each depth. Thus each mark keeps the contrast that the theme check gives on `surface.sunken`.
+  - The **state mark** is at the top right corner: the state glyph of [State glyphs](#state-glyphs), drawn at `size.corner-mark`. The rules of [Aggregate state](#aggregate-state) apply: an open group shows no state mark.
+  - The **open mark** is at the bottom right corner of an open group tile: the open caret, the path `M3 6l5 5 5-5` in the 16 × 16 view box with a stroke of 3 units and round caps and joins, in `text.muted`. It is neutral: it is not a state.
 
 ### Label of a project tile
 
 The label has two characters. The rule:
 
 1. The words of the name are separated by `-`, `_`, `.` and spaces.
-2. Remove the leading words that all projects of the same group share, and each word that is the name of a group that holds the project. At least the last word stays.
+2. Remove the leading words that all projects of the same group share, and each word that is a word of the name of a group that holds the project. The words of a group name are separated in the same way. If no word stays, the first word after the shared words stays.
 3. One word left: its first letter in upper case and its second letter in lower case. Two words or more: the first letter of the first two words, in upper case.
 4. If an earlier project in the same group has the same label, the second character becomes the next letter of the remaining words that gives a free label.
 
-With the sample: acme-web, acme-admin and acme-mobile become "We", "Ad" and "Mo"; globex-api becomes "GA"; dotfiles and docs in one group become "Do" and "Dc". The label has no colour of its own: colour carries only state. The tooltip and the expanded rail show the full name.
+With the sample: acme-web, acme-admin and acme-mobile become "We", "Ad" and "Mo"; acme-shop-2019 in the group 2019 becomes "Sh"; globex-api becomes "GA"; dotfiles and docs in one group become "Do" and "Dc". A group name that is longer, for example "Acme Corporation customer platform" for Acme, gives the same labels, because the rule compares words. The label does not depend on the width of the rail: the narrow and the expanded rail show the same label. The label has no colour of its own: colour carries only state. The tooltip and the expanded rail show the full name.
 
 ### Selection, pointer and keyboard focus
 
@@ -228,7 +234,7 @@ With the sample: acme-web, acme-admin and acme-mobile become "We", "Ad" and "Mo"
 ### Expanded rail
 
 - The user drags the right edge of the rail to make it wide. Then each tile has its name at its right; the default width is 12 × `space.4` (192 px). A drag below that width closes the rail to its closed width.
-- The tiles, the strips and the inset rule do not change. The strips are as wide as the rail minus their x on each side.
+- The tiles, their faces, their labels, the strips and the inset rule do not change when the rail becomes wide. The strips are as wide as the rail minus their x on each side.
 - The name starts `space.2` right of the tile and ends `space.2` before the right edge of its strip. A project name is `font.row.*`; a group name is `font.row.size` and `font.title.weight`. Both are `text.secondary`; the name of the selected project is `text.primary`.
 - A long name truncates with an ellipsis. The full name is in the tooltip of the name.
 
@@ -280,3 +286,16 @@ The project rail, measured in the same way in each of the seven themes, in the t
 | Rail width closed | 52 | 48 |
 | Rail width expanded | 192 | 192 |
 | Strip x and width at depth 1 to 5, closed rail | 2 / 48, 4 / 44, 6 / 40, 8 / 36, 10 / 32 | 2 / 44, 4 / 40, 6 / 36, 8 / 32, 10 / 28 |
+| State mark and open mark, drawn size | 10 × 10 | 10 × 10 |
+
+The contrast between adjacent levels of the strip fill, level 0 (`surface.sunken`) to level 5, from the theme values with the formula of WCAG 2.x, and the contrast of `text.secondary` on level 5:
+
+| Theme | `fill.level` | Level 1, 2, 3, 4, 5 to the level below | `text.secondary` on level 5 |
+|---|---|---|---|
+| base-dark | `#e8e8e810` | 1.14, 1.17, 1.19, 1.19, 1.18 | 4.93 |
+| base-light | `#1c1c1c10` | 1.13, 1.13, 1.12, 1.12, 1.12 | 4.80 |
+| catppuccin-mocha | `#cdd6f410` | 1.13, 1.16, 1.17, 1.17, 1.16 | 5.14 |
+| gruvbox-dark | `#ebdbb210` | 1.15, 1.17, 1.17, 1.17, 1.16 | 4.86 |
+| nomux-dark | `#e6e8eb10` | 1.14, 1.18, 1.19, 1.19, 1.18 | 4.97 |
+| nomux-light | `#1a1d2110` | 1.13, 1.13, 1.12, 1.12, 1.12 | 4.66 |
+| tokyo-night | `#c0caf50e` | 1.11, 1.13, 1.13, 1.13, 1.13 | 4.68 |

@@ -5,7 +5,6 @@
 use super::super::escape;
 use super::super::glyph::{State, glyph};
 use super::group::{Entry, Group, GroupFrame, Node};
-use super::icon::{Icon, icon};
 
 /// The levels of open groups that make the strip narrower by one step.
 /// Deeper strips have the width of the fifth level.
@@ -94,8 +93,14 @@ impl Rail {
             });
         }
         let depth = path.len();
+        let initial: String = group
+            .name
+            .chars()
+            .take(1)
+            .flat_map(char::to_uppercase)
+            .collect();
         let tile = self.item(&Tile {
-            face: icon(Icon::Open),
+            face: format!("{}{OPEN_MARK}", escape(&initial)),
             state: None,
             classes: format!("{} group open", marks(false, group.hover, false)),
             name: group.name,
@@ -107,7 +112,7 @@ impl Rail {
             "rail-group"
         };
         format!(
-            "<div class=\"{class}\" style=\"--depth: {step}; --rail-fill: {fill}\">{tile}{children}</div>",
+            "<div class=\"{class}\" style=\"--depth: {step}; background: {fill}\">{tile}{children}</div>",
             step = depth.min(STEPPED_LEVELS),
             fill = fill(depth),
             children = self.children(group, path),
@@ -165,6 +170,10 @@ fn marks(selected: bool, hover: bool, focus: bool) -> String {
     .collect()
 }
 
+/// The mark of an open group at the bottom right corner of its tile: the
+/// open caret, drawn like a state glyph.
+const OPEN_MARK: &str = "<svg class=\"open-mark\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-label=\"open\"><path d=\"M3 6l5 5 5-5\"/></svg>";
+
 /// The face of a closed group: a small square for each of its first four
 /// children, filled for a project, hollow for a group.
 fn minis(group: &Group) -> String {
@@ -183,19 +192,23 @@ fn minis(group: &Group) -> String {
     format!("<span class=\"minis\">{squares}</span>")
 }
 
-/// The fill of a strip: one step of `fill.hover` for each level of open
-/// groups, over the surface of the rail.
+/// The fill of a strip: one layer of `fill.level` for each level of open
+/// groups, over the surface of the rail, to five levels.
 fn fill(depth: usize) -> String {
-    let step = "linear-gradient(var(--fill-hover), var(--fill-hover)), ";
-    format!("{}var(--surface-sunken)", step.repeat(depth))
+    let step = "linear-gradient(var(--fill-level), var(--fill-level)), ";
+    format!(
+        "{}var(--surface-sunken)",
+        step.repeat(depth.min(STEPPED_LEVELS))
+    )
 }
 
 /// The two letters of a project tile.
 ///
 /// 1. The words of the name are separated by `-`, `_`, `.` and spaces.
 /// 2. The leading words that all projects of the group share, and each word
-///    that is the name of a group that holds the project, are removed. At
-///    least the last word stays.
+///    that is a word of the name of a group that holds the project, are
+///    removed. When no word stays, the first word after the shared words
+///    stays.
 /// 3. One word gives its first letter in upper case and its second letter in
 ///    lower case. Two or more words give the first letter of the first two
 ///    words, in upper case.
@@ -215,13 +228,14 @@ fn label(name: &str, siblings: &[&str], path: &[&str], taken: &[String]) -> Stri
             })
             .count()
     };
+    let group_words: Vec<String> = path.iter().flat_map(|group| words(group)).collect();
     let mut kept: Vec<&String> = own
         .iter()
         .skip(shared)
-        .filter(|word| !path.iter().any(|group| group.to_lowercase() == **word))
+        .filter(|word| !group_words.contains(word))
         .collect();
     if kept.is_empty() {
-        kept.extend(own.last());
+        kept.extend(own.get(shared).or(own.last()));
     }
     let letters: Vec<char> = kept.iter().flat_map(|word| word.chars()).collect();
     let first = letters[0].to_uppercase().collect::<String>();
@@ -351,6 +365,32 @@ mod tests {
             .collect();
         assert_eq!(selected.len(), 1);
         assert!(selected[0].contains(">We<"));
+    }
+
+    #[test]
+    fn a_long_group_name_does_not_change_a_label() {
+        let short = ["Client work", "Acme", "Web", "Legacy", "2019"];
+        let long = [
+            "Client work",
+            "Acme Corporation customer platform",
+            "Storefront and checkout for the web",
+            "Legacy",
+            "2019",
+        ];
+        let siblings = ["acme-web", "acme-admin"];
+        for (name, siblings, depth) in [
+            ("acme-web", &siblings[..], 3),
+            ("acme-admin", &siblings[..], 3),
+            ("acme-mobile", &["acme-mobile"][..], 2),
+            ("acme-shop-2019", &["acme-shop-2019"][..], 5),
+        ] {
+            let narrow = label(name, siblings, &short[..depth], &[]);
+            assert_eq!(narrow, label(name, siblings, &long[..depth], &[]), "{name}");
+        }
+        assert_eq!(
+            label("acme-shop-2019", &["acme-shop-2019"], &long, &[]),
+            "Sh"
+        );
     }
 
     #[test]

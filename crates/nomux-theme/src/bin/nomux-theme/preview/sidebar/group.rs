@@ -126,7 +126,6 @@ impl Group {
 
 /// The path of the group that holds the selected project.
 const WEB: [&str; 3] = ["Client work", "Acme", "Web"];
-const SELECTED: &str = "acme-web";
 
 /// The sample: nine projects in four groups, one group in a group in a
 /// group. The selected project is the project of the sidebar sample. At
@@ -231,7 +230,9 @@ impl GroupFrame {
             Self::PointerOnProject => "(g) Pointer on acme-admin",
             Self::PointerOnGroup => "(h) Pointer on Personal",
             Self::Scroll => "(i) Taller than the window: the rail scrolls",
-            Self::Expanded => "(j) The expanded rail with long names",
+            Self::Expanded => {
+                "(j) The expanded rail with long names: the faces and the labels stay"
+            }
         }
     }
 
@@ -288,8 +289,8 @@ impl GroupFrame {
                 add_five_levels(&mut tree);
                 tree.find_mut(&WEB[..2]).name = "Acme Corporation customer platform";
                 tree.find_mut(&["Client work", "Acme Corporation customer platform", "Web"])
-                    .name = "Storefront and checkout for the web";
-                tree.entry_mut(SELECTED).name = "acme-web-storefront-and-checkout-2026";
+                    .name = "Web storefront and checkout";
+                tree.entry_mut("globex-api").name = "globex-api-gateway-and-billing";
             }
         }
         tree

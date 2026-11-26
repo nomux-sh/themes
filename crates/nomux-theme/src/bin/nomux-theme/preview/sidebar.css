@@ -80,11 +80,11 @@
 
 /* The project rail. Each tile is --rail-padding from the left edge of the
    rail, at each depth. An open group is a strip: each level of strips is one
-   --rail-step narrower on each side, to five levels, and one step of
-   fill.hover lighter. */
+   --rail-step narrower on each side, and one more layer of fill.level, to
+   five levels. */
 .rail {
   --rail-padding: var(--space-3); --rail-margin: calc(var(--space-1) / 2); --rail-step: calc(var(--space-1) / 2);
-  --rail-fill: var(--surface-sunken); --depth: 0;
+  --depth: 0;
   display: flex; flex-direction: column; gap: var(--space-2); flex: none;
   width: calc(var(--control-height) + var(--rail-padding) * 2); padding: var(--space-2) var(--rail-margin);
   background: var(--surface-sunken);
@@ -93,7 +93,7 @@
 .rail-group {
   display: flex; flex-direction: column; gap: var(--space-2);
   padding: var(--space-1) var(--rail-step); margin-block: calc(var(--space-1) * -1);
-  border-radius: var(--radius-raised); background: var(--rail-fill);
+  border-radius: var(--radius-raised);
 }
 .rail-group.deep { padding-inline: 0; }
 .rail-item { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-left: calc(var(--rail-padding) - var(--rail-margin) - var(--rail-step) * var(--depth)); }
@@ -105,17 +105,23 @@
   font-size: var(--font-title-size); font-weight: var(--font-title-weight);
   transition: background-color var(--motion-fast) var(--motion-easing);
 }
-.tile.open { background-color: transparent; color: var(--text-muted); }
 .tile.selected { color: var(--text-primary); }
 .tile.selected::before {
   content: ""; position: absolute; left: calc(var(--rail-padding) * -1); top: calc((var(--control-height) - var(--size-icon)) / 2);
   width: var(--focus-ring-width); height: var(--size-icon); border-radius: 0 var(--focus-ring-width) var(--focus-ring-width) 0; background: var(--accent);
 }
-/* The mark at the corner of a tile is cut out of the fill behind the tile. */
-.tile .glyph {
-  position: absolute; top: calc(var(--space-1) / -2 - var(--focus-ring-width)); right: calc(var(--space-1) / -2 - var(--focus-ring-width));
-  padding: var(--focus-ring-width); border-radius: 50%; background: var(--rail-fill);
+/* The marks at the corners of a tile are cut out of the tile by a ring of
+   surface.sunken at each depth, thus each mark keeps the contrast that the
+   theme check gives on surface.sunken. The state is at the top right, the
+   open mark at the bottom right. */
+.tile .glyph, .tile .open-mark {
+  position: absolute; right: calc(var(--space-1) / -2 - var(--focus-ring-width));
+  width: var(--size-corner-mark); height: var(--size-corner-mark);
+  padding: var(--focus-ring-width); border-radius: 50%; background: var(--surface-sunken);
+  box-sizing: content-box;
 }
+.tile .glyph { top: calc(var(--space-1) / -2 - var(--focus-ring-width)); }
+.tile .open-mark { bottom: calc(var(--space-1) / -2 - var(--focus-ring-width)); color: var(--text-muted); overflow: visible; }
 .minis { display: grid; grid-template-columns: repeat(2, calc((var(--size-icon) - var(--space-1)) / 2)); grid-template-rows: repeat(2, calc((var(--size-icon) - var(--space-1)) / 2)); gap: var(--space-1); }
 .minis > span { border-radius: calc(var(--radius-button) / 4); background-color: var(--text-muted); }
 .minis > .hollow { background-color: transparent; box-shadow: inset 0 0 0 var(--line-width) var(--text-muted); }
