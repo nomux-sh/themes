@@ -18,6 +18,7 @@ The token set applies the visual rules of nomux. The `check` command of `nomux-t
 - **Text contrast.** Checked: `text.primary`, `text.secondary` and `text.muted` have a contrast of 4.5:1 or more on each surface, also below `fill.hover` and `fill.selected`. Muted text gets its level from its colour, not from opacity.
 - **Colour carries only state.** There are five state colours and one accent. All other UI colours are neutral. Checked: each state colour, the accent and the focus ring have a contrast of 3:1 or more on each surface. The colours of terminals, diffs and syntax are colours of the content, not of the UI.
 - **Neutral hover and selection.** Checked: `fill.hover` and `fill.selected` are `text.primary` with an alpha from 4% to 8%. The text colour does not change on a selected row.
+- **Levels of open groups.** The strip of an open group in the project rail has one more layer of `fill.level` over `surface.sunken` for each level, to 5 levels. Checked: `fill.level` is `text.primary` with an alpha from 4% to 8%, each level has a contrast of 1.1:1 or more to the level below, and `text.primary` and `text.secondary` have 4.5:1 or more on each level.
 - **Hairlines.** Lines are 0.5 px to 1 px wide and have low alpha. A dark theme uses a line that is darker than the surface.
 - **Typography.** One UI font and one monospace font. The scale is title 13 px medium, row 12 px, metadata 11 px.
 - **Spacing.** Checked: each `space.*` and `density.*` length is a multiple of 4 px. There are two densities: comfortable and compact.
@@ -39,7 +40,7 @@ Contrast is the contrast ratio of WCAG 2.x. A transparent colour is painted over
 
 ## Token list
 
-The token set has 86 tokens.
+The token set has 88 tokens.
 
 ### Surfaces
 
@@ -66,12 +67,13 @@ The text levels. Each level keeps the text contrast of the design rules on each 
 
 ### Fills
 
-Transparent tints that are painted over a surface to show hover and selection.
+Transparent tints that are painted over a surface to show hover, selection and the levels of open groups.
 
 | Token | Kind | Role | Use |
 |---|---|---|---|
 | `fill.hover` | colour | A neutral tint of `text.primary` (4% to 8%) that is painted over a surface. | The row, Tab or control below the pointer. |
 | `fill.selected` | colour | A neutral tint of `text.primary` (4% to 8%) that is painted over a surface. The text colour does not change. | The selected row and a pressed control. |
+| `fill.level` | colour | A neutral tint of `text.primary` that is painted once for each level of open groups, over `surface.sunken`. | The strip of an open group in the project rail. Adjacent levels keep the level contrast of the design rules. |
 
 ### Lines
 
@@ -224,6 +226,7 @@ Fixed sizes of icons and marks.
 |---|---|---|---|
 | `size.icon` | length | The one icon size of a row. | Icons in rows, Tabs, chips and buttons. |
 | `size.mark` | length | The diameter of a status mark. | Status marks. A state does not change the size of the mark. |
+| `size.corner-mark` | length | The diameter of a mark at the corner of a tile. | The state mark and the open mark of a tile in the project rail. |
 
 ### Radii
 

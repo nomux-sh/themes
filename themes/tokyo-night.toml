@@ -23,6 +23,7 @@ extends = "base-dark"
 
 "fill.hover" = "#c0caf50d"
 "fill.selected" = "#c0caf514"
+"fill.level" = "#c0caf50e"
 
 "focus.ring" = "#7aa2f7"
 "accent" = "#7aa2f7"

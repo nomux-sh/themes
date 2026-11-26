@@ -85,7 +85,7 @@ An editor that knows JSON Schema can complete the token names. With the [Taplo](
    cargo run -p nomux-theme -- check themes
    ```
 
-   The check examines the token names, the value syntax and the visual rules. The most important rules: each text level has a contrast of 4.5:1 or more on each surface, each state colour has 3:1 or more, and `fill.hover` and `fill.selected` are `text.primary` with an alpha from 4% to 8%. If a colour of the palette does not pass on a surface, select a different tone of the palette for the surface or for the colour. Do not change a rule.
+   The check examines the token names, the value syntax and the visual rules. The most important rules: each text level has a contrast of 4.5:1 or more on each surface, each state colour has 3:1 or more, `fill.hover`, `fill.selected` and `fill.level` are `text.primary` with an alpha from 4% to 8%, and each level of `fill.level` in the project rail has 1.1:1 or more to the level below it. If a colour of the palette does not pass on a surface, select a different tone of the palette for the surface or for the colour. Do not change a rule.
 6. Write the preview page and look at the theme:
 
    ```sh

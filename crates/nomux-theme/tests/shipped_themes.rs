@@ -52,6 +52,7 @@ fn a_theme_that_breaks_the_rules_gets_one_violation_for_each_rule() {
             "surface.button" = "#16181c"
             "fill.hover" = "#6b8afd0d"
             "fill.selected" = "#e6e8eb40"
+            "fill.level" = "#6b8afd03"
             "space.2" = "6px"
             "density.compact.two-line-row-height" = "34px"
             "motion.slow" = "400ms"
@@ -74,11 +75,20 @@ fn a_theme_that_breaks_the_rules_gets_one_violation_for_each_rule() {
         surface: ColorToken::SurfaceButton,
         below: ColorToken::SurfaceBase
     }));
-    for fill in [ColorToken::FillHover, ColorToken::FillSelected] {
+    for fill in [
+        ColorToken::FillHover,
+        ColorToken::FillSelected,
+        ColorToken::FillLevel,
+    ] {
         assert!(violations.iter().any(
             |violation| matches!(violation, Violation::NotTextTint { token, .. } if *token == fill)
         ));
     }
+    assert!(
+        violations
+            .iter()
+            .any(|violation| matches!(violation, Violation::LevelStep { level: 1, .. }))
+    );
     assert!(violations.iter().any(|violation| matches!(
         violation,
         Violation::OffGrid {

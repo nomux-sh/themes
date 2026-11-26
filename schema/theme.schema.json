@@ -78,6 +78,10 @@
           "description": "A neutral tint of `text.primary` (4% to 8%) that is painted over a surface. The text colour does not change. Use: The selected row and a pressed control.",
           "$ref": "#/$defs/color"
         },
+        "fill.level": {
+          "description": "A neutral tint of `text.primary` that is painted once for each level of open groups, over `surface.sunken`. Use: The strip of an open group in the project rail. Adjacent levels keep the level contrast of the design rules.",
+          "$ref": "#/$defs/color"
+        },
         "line.hairline": {
           "description": "A line colour with low alpha. Use: Separators between items in one region, where a tone step is not possible. Do not use it to put a box around a region.",
           "$ref": "#/$defs/color"
@@ -332,6 +336,10 @@
         },
         "size.mark": {
           "description": "The diameter of a status mark. Use: Status marks. A state does not change the size of the mark.",
+          "$ref": "#/$defs/length"
+        },
+        "size.corner-mark": {
+          "description": "The diameter of a mark at the corner of a tile. Use: The state mark and the open mark of a tile in the project rail.",
           "$ref": "#/$defs/length"
         },
         "radius.button": {

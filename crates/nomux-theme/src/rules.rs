@@ -1,6 +1,6 @@
 //! The visual rules that each theme must obey: contrast, opaque surfaces
-//! that differ by tone steps, neutral fills, the 4 px grid and the motion
-//! range.
+//! that differ by tone steps, neutral fills, distinct levels of open groups,
+//! the 4 px grid and the motion range.
 
 use std::fmt;
 use std::time::Duration;
@@ -23,8 +23,14 @@ pub const MOTION_RANGE: (Duration, Duration) =
 /// The shortest and the longest cycle of a continuous indicator.
 pub const INDICATOR_RANGE: (Duration, Duration) =
     (Duration::from_millis(800), Duration::from_millis(1600));
-/// The smallest and the largest alpha of a hover or selection fill, in percent.
+/// The smallest and the largest alpha of a hover, selection or level fill,
+/// in percent.
 pub const FILL_ALPHA_PERCENT: (u32, u32) = (4, 8);
+/// The minimum contrast ratio between two adjacent levels of open groups.
+pub const LEVEL_CONTRAST: f64 = 1.1;
+/// The levels of open groups that get one more layer of `fill.level`.
+/// Deeper levels have the fill of the last one.
+pub const LEVELS: usize = 5;
 
 const SURFACES: [ColorToken; 5] = [
     ColorToken::SurfaceSunken,
@@ -49,6 +55,13 @@ const TEXT_LEVELS: [ColorToken; 3] = [
     ColorToken::TextMuted,
 ];
 const FILLS: [ColorToken; 2] = [ColorToken::FillHover, ColorToken::FillSelected];
+const TINTS: [ColorToken; 3] = [
+    ColorToken::FillHover,
+    ColorToken::FillSelected,
+    ColorToken::FillLevel,
+];
+/// The text levels of the names on the strip of an open group.
+const LEVEL_TEXT: [ColorToken; 2] = [ColorToken::TextPrimary, ColorToken::TextSecondary];
 const MARKS: [ColorToken; 7] = [
     ColorToken::StateWorking,
     ColorToken::StateNeedsYou,
@@ -150,13 +163,30 @@ pub enum Violation {
         /// The surface below.
         below: ColorToken,
     },
-    /// A hover or selection fill is not a tint of `text.primary` in the
-    /// permitted alpha range.
+    /// A hover, selection or level fill is not a tint of `text.primary` in
+    /// the permitted alpha range.
     NotTextTint {
         /// The token.
         token: ColorToken,
         /// The value of the token.
         value: Rgba,
+    },
+    /// A level of open groups has too little contrast to the level below
+    /// it.
+    LevelStep {
+        /// The level: 1 is a group at the top of the project rail.
+        level: usize,
+        /// The contrast ratio to the level below.
+        ratio: f64,
+    },
+    /// A text level has too little contrast on a level of open groups.
+    LevelText {
+        /// The text level.
+        text: ColorToken,
+        /// The level.
+        level: usize,
+        /// The contrast ratio of the text on the level.
+        ratio: f64,
     },
     /// A spacing length is not a multiple of the grid.
     OffGrid {
@@ -197,6 +227,17 @@ impl fmt::Display for Violation {
                 token.name(),
                 FILL_ALPHA_PERCENT.0,
                 FILL_ALPHA_PERCENT.1
+            ),
+            Self::LevelStep { level, ratio } => write!(
+                formatter,
+                "level {level} of `fill.level` over `surface.sunken` has a contrast of {ratio:.2}:1 \
+                 to the level below, the minimum is {LEVEL_CONTRAST}:1"
+            ),
+            Self::LevelText { text, level, ratio } => write!(
+                formatter,
+                "`{}` on level {level} of `fill.level` over `surface.sunken` has a contrast of \
+                 {ratio:.2}:1, the minimum is {TEXT_CONTRAST}:1",
+                text.name()
             ),
             Self::OffGrid { token, value } => {
                 write!(
@@ -287,6 +328,35 @@ pub fn contrast_checks(theme: &Theme) -> Vec<ContrastCheck> {
         .collect()
 }
 
+/// The fill of each level of open groups: `surface.sunken` at level 0, then
+/// one more layer of `fill.level` for each level.
+pub fn levels(theme: &Theme) -> [Rgba; LEVELS + 1] {
+    let fill = theme.color(ColorToken::FillLevel);
+    let mut levels = [theme.color(ColorToken::SurfaceSunken); LEVELS + 1];
+    for level in 1..=LEVELS {
+        levels[level] = fill.over(levels[level - 1]);
+    }
+    levels
+}
+
+fn level_violations(theme: &Theme) -> Vec<Violation> {
+    let levels = levels(theme);
+    let mut violations = Vec::new();
+    for level in 1..=LEVELS {
+        let ratio = contrast_ratio(levels[level], levels[level - 1]);
+        if ratio < LEVEL_CONTRAST {
+            violations.push(Violation::LevelStep { level, ratio });
+        }
+        for text in LEVEL_TEXT {
+            let ratio = contrast_ratio(theme.color(text), levels[level]);
+            if ratio < TEXT_CONTRAST {
+                violations.push(Violation::LevelText { text, level, ratio });
+            }
+        }
+    }
+    violations
+}
+
 /// The rules that this theme does not obey. The list is empty when the
 /// theme is correct.
 pub fn violations(theme: &Theme) -> Vec<Violation> {
@@ -308,7 +378,7 @@ pub fn violations(theme: &Theme) -> Vec<Violation> {
     violations.extend(same_tone.map(|(surface, below)| Violation::NoToneStep { surface, below }));
 
     let text = theme.color(ColorToken::TextPrimary);
-    for token in FILLS {
+    for token in TINTS {
         let value = theme.color(token);
         let percent = (f64::from(value.alpha) / 255.0 * 100.0).round() as u32;
         let in_range = (FILL_ALPHA_PERCENT.0..=FILL_ALPHA_PERCENT.1).contains(&percent);
@@ -316,6 +386,8 @@ pub fn violations(theme: &Theme) -> Vec<Violation> {
             violations.push(Violation::NotTextTint { token, value });
         }
     }
+
+    violations.extend(level_violations(theme));
 
     for token in SPACING {
         let value = theme.length(token);

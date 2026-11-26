@@ -24,6 +24,7 @@ The token set applies the visual rules of nomux. The `check` command of `nomux-t
 - **Text contrast.** Checked: `text.primary`, `text.secondary` and `text.muted` have a contrast of @TEXT@:1 or more on each surface, also below `fill.hover` and `fill.selected`. Muted text gets its level from its colour, not from opacity.
 - **Colour carries only state.** There are five state colours and one accent. All other UI colours are neutral. Checked: each state colour, the accent and the focus ring have a contrast of @MARK@:1 or more on each surface. The colours of terminals, diffs and syntax are colours of the content, not of the UI.
 - **Neutral hover and selection.** Checked: `fill.hover` and `fill.selected` are `text.primary` with an alpha from @FILL_MIN@% to @FILL_MAX@%. The text colour does not change on a selected row.
+- **Levels of open groups.** The strip of an open group in the project rail has one more layer of `fill.level` over `surface.sunken` for each level, to @LEVELS@ levels. Checked: `fill.level` is `text.primary` with an alpha from @FILL_MIN@% to @FILL_MAX@%, each level has a contrast of @LEVEL@:1 or more to the level below, and `text.primary` and `text.secondary` have @TEXT@:1 or more on each level.
 - **Hairlines.** Lines are 0.5 px to 1 px wide and have low alpha. A dark theme uses a line that is darker than the surface.
 - **Typography.** One UI font and one monospace font. The scale is title 13 px medium, row 12 px, metadata 11 px.
 - **Spacing.** Checked: each `space.*` and `density.*` length is a multiple of @GRID@ px. There are two densities: comfortable and compact.
@@ -52,7 +53,7 @@ const GROUPS: [(&str, &str, &str); 17] = [
     (
         "fill",
         "Fills",
-        "Transparent tints that are painted over a surface to show hover and selection.",
+        "Transparent tints that are painted over a surface to show hover, selection and the levels of open groups.",
     ),
     ("line", "Lines", "Hairlines and Pane dividers."),
     ("focus", "Focus", "The keyboard focus indicator."),
@@ -111,6 +112,8 @@ pub fn render() -> String {
         .replace("@TEXT@", &rules::TEXT_CONTRAST.to_string())
         .replace("@MARK@", &rules::MARK_CONTRAST.to_string())
         .replace("@GRID@", &rules::GRID.to_string())
+        .replace("@LEVEL@", &rules::LEVEL_CONTRAST.to_string())
+        .replace("@LEVELS@", &rules::LEVELS.to_string())
         .replace("@FILL_MIN@", &rules::FILL_ALPHA_PERCENT.0.to_string())
         .replace("@FILL_MAX@", &rules::FILL_ALPHA_PERCENT.1.to_string())
         .replace(
