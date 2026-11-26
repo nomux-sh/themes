@@ -20,6 +20,9 @@ pub const GRID: f32 = 4.0;
 /// The shortest and the longest duration of a transition.
 pub const MOTION_RANGE: (Duration, Duration) =
     (Duration::from_millis(120), Duration::from_millis(200));
+/// The shortest and the longest cycle of a continuous indicator.
+pub const INDICATOR_RANGE: (Duration, Duration) =
+    (Duration::from_millis(800), Duration::from_millis(1600));
 /// The smallest and the largest alpha of a hover or selection fill, in percent.
 pub const FILL_ALPHA_PERCENT: (u32, u32) = (4, 8);
 
@@ -162,7 +165,7 @@ pub enum Violation {
         /// The value of the token.
         value: Length,
     },
-    /// A duration is not in the motion range.
+    /// A duration is not in the range of its kind of motion.
     MotionOutOfRange {
         /// The token.
         token: DurationToken,
@@ -202,15 +205,27 @@ impl fmt::Display for Violation {
                     token.name()
                 )
             }
-            Self::MotionOutOfRange { token, value } => write!(
-                formatter,
-                "`{}` is {}ms. It must be from {}ms to {}ms",
-                token.name(),
-                value.as_millis(),
-                MOTION_RANGE.0.as_millis(),
-                MOTION_RANGE.1.as_millis()
-            ),
+            Self::MotionOutOfRange { token, value } => {
+                let (shortest, longest) = motion_range(*token);
+                write!(
+                    formatter,
+                    "`{}` is {}ms. It must be from {}ms to {}ms",
+                    token.name(),
+                    value.as_millis(),
+                    shortest.as_millis(),
+                    longest.as_millis()
+                )
+            }
         }
+    }
+}
+
+/// The permitted durations of a token: a transition or a continuous
+/// indicator.
+pub fn motion_range(token: DurationToken) -> (Duration, Duration) {
+    match token {
+        DurationToken::MotionFast | DurationToken::MotionSlow => MOTION_RANGE,
+        DurationToken::MotionIndicator => INDICATOR_RANGE,
     }
 }
 
@@ -311,7 +326,8 @@ pub fn violations(theme: &Theme) -> Vec<Violation> {
 
     for token in DurationToken::ALL {
         let value = theme.duration(*token);
-        if value < MOTION_RANGE.0 || value > MOTION_RANGE.1 {
+        let (shortest, longest) = motion_range(*token);
+        if value < shortest || value > longest {
             violations.push(Violation::MotionOutOfRange {
                 token: *token,
                 value,

@@ -370,8 +370,12 @@
           "description": "The duration of a size change, from 120 ms to 200 ms. Use: A row that expands, a panel that opens and a Tab that moves.",
           "$ref": "#/$defs/duration"
         },
+        "motion.indicator": {
+          "description": "The duration of one cycle of a continuous indicator, from 800 ms to 1600 ms. Use: One turn of the working glyph. The indicator turns at a constant speed while the agent works.",
+          "$ref": "#/$defs/duration"
+        },
         "motion.easing": {
-          "description": "The one easing of the UI: ease-out. Use: Each transition. Motion occurs only on a state change, and the client stops it when the user asks for reduced motion.",
+          "description": "The one easing of the UI: ease-out. Use: Each transition. A transition occurs only on a state change. A continuous indicator does not use an easing. The client stops all motion when the user asks for reduced motion.",
           "$ref": "#/$defs/easing"
         }
       }

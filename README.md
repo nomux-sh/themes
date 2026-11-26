@@ -109,7 +109,7 @@ The UI reads one token set and has no colour, font, length or duration that is n
 - Colour carries only state: working (blue), needs you (yellow), done and not read (green), error (red) and idle (grey), and one accent. All other UI colours are neutral.
 - Hover and selection are a neutral tint of the text colour. The text colour does not change.
 - Muted text keeps a contrast of 4.5:1. It is not made with opacity.
-- One UI font and one monospace font, a 4 px grid with two densities, and motion from 120 ms to 200 ms.
+- One UI font and one monospace font, a 4 px grid with two densities, transitions from 120 ms to 200 ms, and one continuous indicator (the working glyph) with a cycle from 800 ms to 1600 ms.
 
 The token set is in `crates/nomux-theme/src/token.rs`. The schema and the token reference come from it:
 

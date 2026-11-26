@@ -107,4 +107,5 @@ appearance = "dark"
 
 "motion.fast" = "120ms"
 "motion.slow" = "200ms"
+"motion.indicator" = "1000ms"
 "motion.easing" = "cubic-bezier(0, 0, 0.2, 1)"

@@ -254,6 +254,9 @@ token_kind! {
     MotionSlow = "motion.slow",
         "The duration of a size change, from 120 ms to 200 ms.",
         "A row that expands, a panel that opens and a Tab that moves.";
+    MotionIndicator = "motion.indicator",
+        "The duration of one cycle of a continuous indicator, from 800 ms to 1600 ms.",
+        "One turn of the working glyph. The indicator turns at a constant speed while the agent works.";
 }
 
 token_kind! {
@@ -262,7 +265,7 @@ token_kind! {
 
     MotionEasing = "motion.easing",
         "The one easing of the UI: ease-out.",
-        "Each transition. Motion occurs only on a state change, and the client stops it when the user asks for reduced motion.";
+        "Each transition. A transition occurs only on a state change. A continuous indicator does not use an easing. The client stops all motion when the user asks for reduced motion.";
 }
 
 /// All tokens of the token set, in the sequence of the token reference.
