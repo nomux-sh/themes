@@ -25,6 +25,7 @@ extends = "base-dark"
 
 "fill.hover" = "#ebdbb20d"
 "fill.selected" = "#ebdbb214"
+"fill.level" = "#ebdbb210"
 
 # bright_orange
 "focus.ring" = "#fe8019"

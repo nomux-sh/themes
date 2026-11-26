@@ -19,6 +19,7 @@ extends = "base-light"
 
 "fill.hover" = "#1a1d210d"
 "fill.selected" = "#1a1d2114"
+"fill.level" = "#1a1d2110"
 
 "focus.ring" = "#3d5fe0"
 "accent" = "#3d5fe0"

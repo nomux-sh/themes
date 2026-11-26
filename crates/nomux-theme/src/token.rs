@@ -96,6 +96,9 @@ token_kind! {
     FillSelected = "fill.selected",
         "A neutral tint of `text.primary` (4% to 8%) that is painted over a surface. The text colour does not change.",
         "The selected row and a pressed control.";
+    FillLevel = "fill.level",
+        "A neutral tint of `text.primary` that is painted once for each level of open groups, over `surface.sunken`.",
+        "The strip of an open group in the project rail. Adjacent levels keep the level contrast of the design rules.";
 
     LineHairline = "line.hairline",
         "A line colour with low alpha.",
@@ -228,6 +231,7 @@ token_kind! {
 
     SizeIcon = "size.icon", "The one icon size of a row.", "Icons in rows, Tabs, chips and buttons.";
     SizeMark = "size.mark", "The diameter of a status mark.", "Status marks. A state does not change the size of the mark.";
+    SizeCornerMark = "size.corner-mark", "The diameter of a mark at the corner of a tile.", "The state mark and the open mark of a tile in the project rail.";
 
     RadiusButton = "radius.button", "The corner radius of elevation level 1.", "Buttons, chips, Tabs, rows and input fields.";
     RadiusRaised = "radius.raised", "The corner radius of elevation level 2.", "Cards.";

@@ -19,6 +19,7 @@ appearance = "light"
 
 "fill.hover" = "#1c1c1c0d"
 "fill.selected" = "#1c1c1c14"
+"fill.level" = "#1c1c1c10"
 
 "line.hairline" = "#0000001f"
 "line.divider" = "#00000033"
@@ -100,6 +101,7 @@ appearance = "light"
 
 "size.icon" = "16px"
 "size.mark" = "8px"
+"size.corner-mark" = "10px"
 
 "radius.button" = "6px"
 "radius.raised" = "8px"
