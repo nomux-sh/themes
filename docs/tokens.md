@@ -39,7 +39,7 @@ Contrast is the contrast ratio of WCAG 2.x. A transparent colour is painted over
 
 ## Token list
 
-The token set has 83 tokens.
+The token set has 85 tokens.
 
 ### Surfaces
 
@@ -210,9 +210,11 @@ The metrics of the two densities. The user selects the density in the configurat
 | `density.comfortable.row-height` | length | Comfortable density: the height of a row. | Sidebar rows and menu rows. |
 | `density.comfortable.control-height` | length | Comfortable density: the height of a control. | Buttons, Tabs, chips and input fields. |
 | `density.comfortable.padding` | length | Comfortable density: the horizontal padding. | The inner edges of rows, Tabs and controls. |
+| `density.comfortable.two-line-row-height` | length | Comfortable density: the height of a row that has a second line. | Sidebar rows that show a name and a line of metadata below it, for example a worktree and its branch. |
 | `density.compact.row-height` | length | Compact density: the height of a row. | Sidebar rows and menu rows. |
 | `density.compact.control-height` | length | Compact density: the height of a control. | Buttons, Tabs, chips and input fields. |
 | `density.compact.padding` | length | Compact density: the horizontal padding. | The inner edges of rows, Tabs and controls. |
+| `density.compact.two-line-row-height` | length | Compact density: the height of a row that has a second line. | Sidebar rows that show a name and a line of metadata below it, for example a worktree and its branch. |
 
 ### Sizes
 

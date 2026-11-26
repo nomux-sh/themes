@@ -306,6 +306,10 @@
           "description": "Comfortable density: the horizontal padding. Use: The inner edges of rows, Tabs and controls.",
           "$ref": "#/$defs/length"
         },
+        "density.comfortable.two-line-row-height": {
+          "description": "Comfortable density: the height of a row that has a second line. Use: Sidebar rows that show a name and a line of metadata below it, for example a worktree and its branch.",
+          "$ref": "#/$defs/length"
+        },
         "density.compact.row-height": {
           "description": "Compact density: the height of a row. Use: Sidebar rows and menu rows.",
           "$ref": "#/$defs/length"
@@ -316,6 +320,10 @@
         },
         "density.compact.padding": {
           "description": "Compact density: the horizontal padding. Use: The inner edges of rows, Tabs and controls.",
+          "$ref": "#/$defs/length"
+        },
+        "density.compact.two-line-row-height": {
+          "description": "Compact density: the height of a row that has a second line. Use: Sidebar rows that show a name and a line of metadata below it, for example a worktree and its branch.",
           "$ref": "#/$defs/length"
         },
         "size.icon": {

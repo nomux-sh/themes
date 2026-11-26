@@ -220,9 +220,11 @@ token_kind! {
     DensityComfortableRowHeight = "density.comfortable.row-height", "Comfortable density: the height of a row.", "Sidebar rows and menu rows.";
     DensityComfortableControlHeight = "density.comfortable.control-height", "Comfortable density: the height of a control.", "Buttons, Tabs, chips and input fields.";
     DensityComfortablePadding = "density.comfortable.padding", "Comfortable density: the horizontal padding.", "The inner edges of rows, Tabs and controls.";
+    DensityComfortableTwoLineRowHeight = "density.comfortable.two-line-row-height", "Comfortable density: the height of a row that has a second line.", "Sidebar rows that show a name and a line of metadata below it, for example a worktree and its branch.";
     DensityCompactRowHeight = "density.compact.row-height", "Compact density: the height of a row.", "Sidebar rows and menu rows.";
     DensityCompactControlHeight = "density.compact.control-height", "Compact density: the height of a control.", "Buttons, Tabs, chips and input fields.";
     DensityCompactPadding = "density.compact.padding", "Compact density: the horizontal padding.", "The inner edges of rows, Tabs and controls.";
+    DensityCompactTwoLineRowHeight = "density.compact.two-line-row-height", "Compact density: the height of a row that has a second line.", "Sidebar rows that show a name and a line of metadata below it, for example a worktree and its branch.";
 
     SizeIcon = "size.icon", "The one icon size of a row.", "Icons in rows, Tabs, chips and buttons.";
     SizeMark = "size.mark", "The diameter of a status mark.", "Status marks. A state does not change the size of the mark.";
